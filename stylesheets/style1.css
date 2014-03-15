@@ -1,0 +1,99 @@
+/** Tablet view **/
+@media screen and (max-width: 960px){
+  h1 {
+    font-size: 1.1em;
+    line-height: 40px;
+  }
+  header nav li{
+    line-height: 40px;
+  }
+}
+
+/** Mobile view **/
+@media screen and (max-width: 480px){
+  #famous article.woman {
+    float: none;
+    margin: 5px auto;
+    padding: 2%;
+    width: 80%
+  }
+}
+
+nav a {
+	color: #F7BB67;
+	padding-right: 30px;
+}
+
+a:hover {
+	color:#F0F2DD;
+}
+
+header {
+	font-family: 'Tangerine', cursive;
+	font-size: 1.5em;
+	color: #F7BB67;
+	background-color: #59A80F;
+	height: auto;
+	width: auto;
+	margin-bottom: 5px;
+	margin-top: auto;
+	text-align: center;
+	border: 0px;
+	padding-top: 2em;
+}
+
+/*Centered the image with this class*/
+img.displayed {
+	display: block;
+	margin-right: auto;
+	margin-left: auto;
+	width: 6em;
+}
+
+/*created a class in case I want to go back and utilize this with more 
+of the image class*/
+section.myimage {
+	background-color: #C4ED68;
+	height: auto;
+	width: auto;
+	margin-bottom: -1em;
+	margin-top: auto;
+	text-align: center;
+	border: 0px;
+}
+
+#mainbody {
+	background-color: #F0F2DD;
+	height: auto;
+	width: auto;
+	margin-bottom: -1em;
+	margin-top: auto;
+}
+
+#mainbody1 h1 {
+	font-family: 'Yesteryear';
+}
+
+p {
+	margin-right: 30px;
+	margin-left: 30px;
+	margin-top: -.5em;
+}
+
+footer {
+	background-color: #F7BB67;
+	height: 6em;
+	color: #59A80F;
+	text-align: center;
+}
+
+footer a {
+	font-weight: bold;
+	color: #59A80F;
+}
+
+div.wrapper{
+    width: 100%;
+    max-width:1400px;
+    margin: 0 auto;
+}
