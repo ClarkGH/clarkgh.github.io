@@ -4,14 +4,14 @@
     font-size: 1.1em;
     line-height: 40px;
   }
-  header nav li{
+  header nav {
     line-height: 40px;
   }
 }
 
 /** Mobile view **/
 @media screen and (max-width: 480px){
-  #famous article.woman {
+  section {
     float: none;
     margin: 5px auto;
     padding: 2%;
