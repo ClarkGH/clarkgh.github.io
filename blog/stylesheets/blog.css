@@ -1,0 +1,109 @@
+/** Tablet **/
+@media screen and (max-width: 960px){
+  /*placeholder*/ {
+    font-size: 1.1em;
+    line-height: 40px;
+  }
+  /*placeholder*/{
+    line-height: 40px;
+  }
+}
+
+/** Mobile phone**/
+@media screen and (max-width: 480px){
+  /** placeholder **/ {
+    float: none;
+    margin: 5px auto;
+    padding: 2%;
+    width: 80%
+  }
+}
+
+body {
+}
+
+a {
+  font-weight: bold;
+  font-family: 'Varela', sans-serif;
+}
+
+a:visited{
+  color: #3B95BD;
+}
+
+a:link{
+  color: #3B95BD;
+}
+
+header {
+  font-size: 1.5em;
+  background-color: #001E28;
+  height: auto;
+  width: auto;
+  margin-bottom: 0em;
+  margin-top: 0em;
+  text-align: center;
+  border: 0px;
+  padding-top: .5em;
+}
+
+header h1 {
+  color: #F5F5F5;
+  font-family: 'Varela', sans-serif;
+}
+
+header nav a {
+  padding-right: 1.875em;
+  font-weight: bold;
+  color: #3B95BD;
+  font-size: .75em;
+}
+
+section {
+  margin: 0em;
+  background-color: #F5F5F5;
+  color: #001E28;
+  margin-top: -1em;
+  float: center;
+  height: 78em;
+}
+
+section h1 {
+  text-align: center;
+  font-family: 'Varela', sans-serif;
+}
+
+section div.wrapper{
+  width: 100%;
+  max-width:1400px;
+  margin: 0 auto;
+}
+
+p{
+  font-family:"Times New Roman", Times, serif;
+}
+
+#sidebar {
+  background-color: #3B95BD;
+  float: left;
+  width: 11.25em;
+  padding-left: .25em;
+  padding-bottom: 3em;
+  margin-right: 1em;
+  text-align: center;
+  height: 75em;
+  margin-top: .25em;
+}
+
+#sidebar a {
+  color: #001E28;
+}
+
+footer {
+  display: block;
+  background-color: #001E28;
+  height: 6em;
+  text-align: center;
+  float: bottom;
+  clear: left;
+}
