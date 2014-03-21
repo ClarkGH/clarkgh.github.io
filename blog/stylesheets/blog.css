@@ -7,18 +7,6 @@
   header nav{
     line-height: 40px;
   }
-  #sidebar{
-    height: 200%;
-  }
-  section{
-    height: 200%;
-  }
-}
-
-@media screen and (max-width: 480px){
-  section {
-    width: 8em;
-  }
 }
 
 a {
@@ -69,7 +57,7 @@ section {
   height: 40em;
   margin-left: -1em;
   overflow-y:auto;
-  width: 30.2em;
+  width: 50em;
 }
 
 section h1 {
@@ -81,12 +69,6 @@ section h2 {
   text-align: center;
   font-family: 'Varela', sans-serif;
   font-size: 1.3em;
-}
-
-section div.wrapper{
-  width: 100%;
-  max-width:1400px;
-  margin: 0 auto;
 }
 
 p{
