@@ -1,25 +1,12 @@
 /** Tablet **/
 @media screen and (max-width: 960px){
-  /*placeholder*/ {
+  h1 {
     font-size: 1.1em;
     line-height: 40px;
   }
-  /*placeholder*/{
+  header nav{
     line-height: 40px;
   }
-}
-
-/** Mobile phone**/
-@media screen and (max-width: 480px){
-  /** placeholder **/ {
-    float: none;
-    margin: 5px auto;
-    padding: 2%;
-    width: 80%
-  }
-}
-
-body {
 }
 
 a {
@@ -45,6 +32,8 @@ header {
   text-align: center;
   border: 0px;
   padding-top: .5em;
+  float: top;
+  clear: bottom;
 }
 
 header h1 {
@@ -65,7 +54,7 @@ section {
   color: #001E28;
   margin-top: -1em;
   float: center;
-  height: 78em;
+  height: 105em;
 }
 
 section h1 {
@@ -86,17 +75,27 @@ p{
 #sidebar {
   background-color: #3B95BD;
   float: left;
-  width: 11.25em;
-  padding-left: .25em;
+  width: 15em;
+  padding-top: 3em;
+  padding-left: .5em;
   padding-bottom: 3em;
-  margin-right: 1em;
+  margin-right: 2em;
   text-align: center;
-  height: 75em;
+  height: 130em;
   margin-top: .25em;
+  font-size: .8em;
+}
+
+#sidebar h1 {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #F5F5F5;
+  text-decoration: underline;
 }
 
 #sidebar a {
   color: #001E28;
+  line-height: 200%;
 }
 
 footer {
