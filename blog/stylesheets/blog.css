@@ -9,6 +9,12 @@
   }
 }
 
+@media screen and (max-width: 480px){
+  section {
+    width: 5em;
+  }
+}
+
 a {
   font-weight: bold;
   font-family: 'Varela', sans-serif;
@@ -34,6 +40,7 @@ header {
   padding-top: .5em;
   float: top;
   clear: bottom;
+  box-shadow: 5px 5px 2.5px #888888;
 }
 
 header h1 {
@@ -52,14 +59,22 @@ section {
   margin: 0em;
   background-color: #F5F5F5;
   color: #001E28;
-  margin-top: -1em;
-  float: center;
-  height: 105em;
+  margin-top: .4em;
+  height: 40em;
+  margin-left: -1em;
+  overflow-y:auto;
+  width: 30.2em;
 }
 
 section h1 {
   text-align: center;
   font-family: 'Varela', sans-serif;
+}
+
+section h2 {
+  text-align: center;
+  font-family: 'Varela', sans-serif;
+  font-size: 1.3em;
 }
 
 section div.wrapper{
@@ -81,9 +96,11 @@ p{
   padding-bottom: 3em;
   margin-right: 2em;
   text-align: center;
-  height: 130em;
-  margin-top: .25em;
+  height: 45em;
+  margin-top: .5em;
   font-size: .8em;
+  overflow-y: auto;
+  box-shadow: 5px 2.5px #888888;
 }
 
 #sidebar h1 {
@@ -99,6 +116,7 @@ p{
 }
 
 footer {
+  box-shadow: 5px 5px 2.5px #888888;
   display: block;
   background-color: #001E28;
   height: 6em;
