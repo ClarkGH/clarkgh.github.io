@@ -2,10 +2,16 @@
 @media screen and (max-width: 960px){
   h1 {
     font-size: 1.1em;
-    line-height: 75px;
+    line-height: 40px;
   }
   header nav{
     line-height: 40px;
+  }
+  #sidebar{
+    height: 200%;
+  }
+  section{
+    height: 200%;
   }
 }
 
