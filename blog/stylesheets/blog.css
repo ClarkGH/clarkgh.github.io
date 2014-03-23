@@ -34,6 +34,7 @@ header {
   padding-top: .5em;
   float: top;
   box-shadow: 5px 5px 2.5px #888888;
+  border-radius: 10px;
 }
 
 header h1 {
@@ -60,6 +61,7 @@ header nav a {
   overflow-y: auto;
   box-shadow: 5px 2.5px #888888;
   position: absolute;
+  border-radius: 10px;
 }
 
 #sidebar h1 {
@@ -114,4 +116,5 @@ footer {
   float: bottom;
   clear: left;
   margin-top: 0.5em;
+  border-radius: 10px;
 }
