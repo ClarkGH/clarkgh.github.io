@@ -11,7 +11,6 @@
 			<A NAME="backToTop">
 			<nav>
 				<a href="http://glubnerdglub.blogspot.com/">Main Blog</a>
-				<a href="main.html">DBC Blog</a>
 				<a href="https://plus.google.com/u/0/+ClarkHinchcliff/posts">Google+</a>
 				<a href="https://twitter.com/Demolisho">Twitter</a>
 				<a href="https://www.linkedin.com/profile/view?id=20707879&trk=nav_responsive_tab_profile_pic">LinkedIn</a>
@@ -58,8 +57,9 @@
 		</div>
 		<section>
 			<div class="wrapper">
-				<h1>Welcome</h1>
-				<p>Hello, and welcome to my Dev Bootcamp assignment blog. This is where I'll be posting all of my cultural and technical Dev Bootcamp blog assignments. I hope they are both intriguing and enlightening</p>
+				<h1>SQL Injection Hacks and Prevention</h1>
+				<p>&nbsp&nbsp&nbsp&nbsp SQL injections are a dangerous possibility with databases where data can both be stolen or be destroyed. Malicious users generally 'inject' SQL commands into SQL statements through webpage input that can alter SQL statements. For the purposes of this, let's say we have a database with protected user information. In the case of SELECT * FROM users WHERE userid = 242 OR 1=1, someone could bypass any password information with an SQL injection and access all of their information. Since the code is valid with unprotected SQL sites, the hacker would receive all of the information since WHERE 1=1 is always returned as true. To summarize, a hacker could get access to database information by inputting OR =.</p>
+				<p>&nbsp&nbsp&nbsp&nbsp There is more that hackers can do with SQL injections, like deleting all of the table's data, but beyond that there are some ways to protect a site from SQL injections. The best way to protect yourself from SQL injections is by using parameters. Parameters are all checked to ensure that they are correct and are not treated as part of the SQL to be executed. This prevents hackers from being able to access your website data. Good examples for preventing SQL Database injection hacks can be found <a href="http://www.w3schools.com/sql/sql_injection.asp">here.</a></p>
 			</div>
 		</section>
 		<footer>

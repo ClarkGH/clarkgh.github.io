@@ -11,7 +11,6 @@
 			<A NAME="backToTop">
 			<nav>
 				<a href="http://glubnerdglub.blogspot.com/">Main Blog</a>
-				<a href="main.html">DBC Blog</a>
 				<a href="https://plus.google.com/u/0/+ClarkHinchcliff/posts">Google+</a>
 				<a href="https://twitter.com/Demolisho">Twitter</a>
 				<a href="https://www.linkedin.com/profile/view?id=20707879&trk=nav_responsive_tab_profile_pic">LinkedIn</a>
@@ -19,7 +18,7 @@
 		</header>
 		<div id="sidebar">
 			<!--Put Links here, a link to main, or if main put links to every blog assignment-->
-			</br>
+		</br>
 			<a href="http://clarkgh.github.io">Main Page</a>
 			</br>
 			<h1>Tech Blogs:</h1>
@@ -58,17 +57,17 @@
 		</div>
 		<section>
 			<div class="wrapper">
-				<h1>Functional Programming</h1>
-				<p>&nbsp&nbsp&nbsp&nbsp Functional programming languages allow you to write functions that take n arguments and return a value (mathematical functions). A completely functional program will always yield the same value for its input. When the program is executed, the expression is evaluated. Functional programs require the functions to be first-class, which means they will be treated like any value as well that the possibility of defining and manipulating of other functions remains.</p>
-				<br/>
-				<p>Ex. function(x,y) {return x+y;}</p>
-				<br/>
-				<p>&nbsp&nbsp&nbsp&nbsp Object-Oriented languages focus on control flow and use both statements as well as expressions. Almost everything is an object in OOP. Data tends to carry a collection of functions as opposed to functional programs where data and functions have more in common with eachother. OOP makes it easier to plan and create complex systems since it gives devs the ability to break the system down into objects.</p>
-				<br/>
-				<p>Ex. var Dance = function(type)</p> 
-				<p>{ this.Type = type}</p>
-			 	</br>
-			 	<p>Functional programs are core based on mathematical function composition. Functional programs are generally shorter and easier to understand than Object-Oriented Programs. Functional programs do not use statements, focus on Data Flow and fans of Functional programming believe that it is faster and more productive than OOP. Regardless of what people say, functional programming is all interwoven. If you change one program it will break many that are interwoven with it, making it harder to manage than OOP.</p>
+				<h1><a href="http://www.ruby-doc.org/core-2.1.1/Enumerable.html#method-i-cycle" target="_blank">Enumerable#cycle</a></h1>
+				<h2>4/03/2014</h2>
+				<p>&nbsp&nbsp&nbsp&nbsp The enumerable cycle method is useful when you want to perform a function several times on each of the objects inside of an array.</p>
+				<p>&nbsp&nbsp&nbsp&nbsp </p>
+				<ol> 
+					<li><strong>Cycle Pseudocode Syntax:</strong></li>
+					<p><i>new_array = []</br>&nbsp&nbsp new_array.cycle(number_to_cycle) { |array_object| code performed on array_object } </i></p>
+					<li><strong>Cycle example:</strong></li>
+					<p><i>new_array = %w(bacon, pig, pork, ribs)</br>&nbsp&nbsp new_array.cycle(2) { |x| print x.capitalize + ", " } <br>&nbsp&nbsp #=> will cycle through the array twice and end up printing: bacon, pig, pork, ribs bacon, pig, pork, ribs</i></p>
+				</ol>
+				<p>&nbsp&nbsp&nbsp&nbsp Notice how Enumberable#cycle when printing the array objects all twice doesn't put a comma after ribs in the example? If we were to run the same array one time in an each do function we would get the answer:<i>  "bacon, pig, pork, ribs"</i> <br>&nbsp&nbsp&nbsp&nbsp In the case of cycling through the array, it takes in the amount of times you want to perform an each do function with simpler and cleaner code. </p>
 			</div>
 		</section>
 		<footer>
