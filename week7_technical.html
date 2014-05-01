@@ -10,6 +10,7 @@
 			<h1>My DBC Blog</h1>
 			<A NAME="backToTop">
 			<nav>
+				<a href="http://clarkgh.github.io">Main Page</a>
 				<a href="http://glubnerdglub.blogspot.com/">Main Blog</a>
 				<a href="https://plus.google.com/u/0/+ClarkHinchcliff/posts">Google+</a>
 				<a href="https://twitter.com/Demolisho">Twitter</a>
@@ -18,9 +19,6 @@
 		</header>
 		<div id="sidebar">
 			<!--Put Links here, a link to main, or if main put links to every blog assignment-->
-		</br>
-			<a href="http://clarkgh.github.io">Main Page</a>
-			</br>
 			<h1>Tech Blogs:</h1>
 			</br>
 			<a href="t1.html">1. Favorite Websites</a>
@@ -37,6 +35,10 @@
 			<br/>
 			<a href="week7_technical.html">7. SQL Injections</a>
 			<br/>
+			<a href="week8_technical.html">8. Regular Expressions</a>
+			<br/>
+			<a href="week9_technical.html">9. Recursion</a>
+			<br/>
 
 			<h1>Cultural Blogs:</h1>
 			<a href="week2_cultural_blog.html">1. My Happiness</a>
@@ -51,6 +53,10 @@
 			<br/>
 			<a href="week7_cultural.html">6. Stereotype Threat 2</a>
 			<br/>
+			<a href="week8_cultural.html">7. The Kitchen</a>
+			<br/>
+			<a href="week9_cultural.html">8. Feedback</a>
+			<br/>
 			<!--Update Links on every blog from here.-->
 		</br>
 
@@ -58,7 +64,11 @@
 		<section>
 			<div class="wrapper">
 				<h1>SQL Injection Hacks and Prevention</h1>
-				<p>&nbsp&nbsp&nbsp&nbsp SQL injections are a dangerous possibility with databases where data can both be stolen or be destroyed. Malicious users generally 'inject' SQL commands into SQL statements through webpage input that can alter SQL statements. For the purposes of this, let's say we have a database with protected user information. In the case of SELECT * FROM users WHERE userid = 242 OR 1=1, someone could bypass any password information with an SQL injection and access all of their information. Since the code is valid with unprotected SQL sites, the hacker would receive all of the information since WHERE 1=1 is always returned as true. To summarize, a hacker could get access to database information by inputting OR =.</p>
+				<p>&nbsp&nbsp&nbsp&nbsp SQL injections are a dangerous possibility with databases where data can both be stolen or be destroyed. Malicious users generally 'inject' SQL commands into SQL statements through webpage input that can alter SQL statements. For the purposes of this, let's say we have a database with protected user information.</p>
+				<ul> 
+					<p><i>SELECT * FROM users WHERE userid = 242 OR 1=1</i></p>
+				</ul>
+				<p>&nbsp&nbsp&nbsp&nbsp In the case of the previous code, someone could bypass any password information with an SQL injection and access all of their information. Since the code is valid with unprotected SQL sites, the hacker would receive all of the information since <i>WHERE 1=1</i> is always returned as true. To summarize, a hacker could get access to database information by inputting <i>OR =</i>.</p>
 				<p>&nbsp&nbsp&nbsp&nbsp There is more that hackers can do with SQL injections, like deleting all of the table's data, but beyond that there are some ways to protect a site from SQL injections. The best way to protect yourself from SQL injections is by using parameters. Parameters are all checked to ensure that they are correct and are not treated as part of the SQL to be executed. This prevents hackers from being able to access your website data. Good examples for preventing SQL Database injection hacks can be found <a href="http://www.w3schools.com/sql/sql_injection.asp">here.</a></p>
 			</div>
 		</section>

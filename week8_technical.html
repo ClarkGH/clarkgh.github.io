@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="stylesheets/blog.css">
+		<link href='http://fonts.googleapis.com/css?family=Varela' rel='stylesheet' type='text/css'>
+				<!--Link Styleshees and fonts -->
+	</head>
+	<body>
+		<header>
+			<h1>My DBC Blog</h1>
+			<A NAME="backToTop">
+			<nav>
+				<a href="http://clarkgh.github.io">Main Page</a>
+				<a href="http://glubnerdglub.blogspot.com/">Main Blog</a>
+				<a href="https://plus.google.com/u/0/+ClarkHinchcliff/posts">Google+</a>
+				<a href="https://twitter.com/Demolisho">Twitter</a>
+				<a href="https://www.linkedin.com/profile/view?id=20707879&trk=nav_responsive_tab_profile_pic">LinkedIn</a>
+			</nav>
+		</header>
+		<div id="sidebar">
+			<!--Put Links here, a link to main, or if main put links to every blog assignment-->
+			<h1>Tech Blogs:</h1>
+			</br>
+			<a href="t1.html">1. Favorite Websites</a>
+			</br>
+			<a href="week2_technical.html">2. Why JS?</a>
+			</br>
+			<a href="week3_technical.html">3. What Loops and When</a>
+			</br>
+			<a href="week4_technical.html">4. Enumerable#cycle</a>
+			</br>
+			<a href="week5_technical.html">5. Classes for the Non-Technical</a>
+			</br>
+			<a href="week6_technical.html">6. Funct. Programming</a>
+			<br/>
+			<a href="week7_technical.html">7. SQL Injections</a>
+			<br/>
+			<a href="week8_technical.html">8. Regular Expressions</a>
+			<br/>
+			<a href="week9_technical.html">9. Recursion</a>
+			<br/>
+
+			<h1>Cultural Blogs:</h1>
+			<a href="week2_cultural_blog.html">1. My Happiness</a>
+			</br>
+			<a href="week3_cultural_blog.html">2. Peering and Feedback </a>
+			</br>
+			<a href="week4_cultural_blog.html">3. Dealing with Conflict</a>
+			</br>
+			<a href="week5_cultural.html">4. The Decay of Ruby</a>
+			</br>
+			<a href="week6_cultural_blog.html">5. Stereotype Threat 1</a>
+			<br/>
+			<a href="week7_cultural.html">6. Stereotype Threat 2</a>
+			<br/>
+			<a href="week8_cultural.html">7. The Kitchen</a>
+			<br/>
+			<a href="week9_cultural.html">8. Feedback</a>
+			<br/>
+			<!--Update Links on every blog from here.-->
+		</br>
+
+		</div>
+		<section>
+			<div class="wrapper">
+				<h1>Regular Expressions</h1>
+
+				<h2>5/1/2014</h2>
+
+				<p>&nbsp&nbsp&nbsp&nbsp Before I get into my explanation of Regular Expressions, I would like to refer to this <a href="http://www.regexr.com/" target="_blank">fantastic resource</a> that I used to work with regular expressions. If there is still some confusion with regular expressions after reading this entry, I recommend reviewing the&nbsp;<a href="http://en.wikipedia.org/wiki/Regular_expression" target="_blank">wikipedia article</a>&nbsp;as well as this <a href="http://www.regular-expressions.info/" target="_blank">link</a> explaining regular expressions. I recommend utilizing the the RegEx quickstart and tutorial on the last link provided if you have no understanding of them, because RegExp is most definitely a very deep subject and I will mainly cover the basics.</p>
+
+				<p>&nbsp&nbsp&nbsp&nbsp Regular expressions or RegEx are sequences of characters used to search via pattern comparisons with strings. In programming, they are used in "find and/or replace" certain patterns found. The great thing about regular expressions is that the code is univeral, and once you understand them, you can utilize them with a large amount of programming languages. What could take up lines of code may end up only taking one line with RegEx.</p>
+
+				<p>For the purposes of this entry, I recommend clicking <a href="http://www.regexr.com/" target="_blank">here</a> and playing with RegExp. I'll list off quite a few of the many different tokens used in searching through RegEx. Know that each token helps you search through different things with variations depending on combinations you make.</p>
+
+				<ol> 
+					<li><strong>The Dot "."</strong></li>
+					<p><i> The dot matches any character that isn't a line break.</i></p>
+
+					<li><strong>[\s\S] or [^]</strong></li>
+					<p><i>[^] isn't supported in all browsers. This can be used to match any character, including line breaks.</i></p>
+
+					<li><strong>[\w]</strong></li>
+					<p><i> This will match any low-ascii characters (anything non-accented).</i></p>
+
+					<li><strong>[\W]</strong></li>
+					<p><i>This will match any character that is not a word character.</i></p>
+
+					<li><strong>[\d]</strong></li>
+					<p><i>This will match any numeric character (0-9).</i></p>
+
+					<li><strong>^</strong></li>
+					<p><i>This matches the beginning of the position of the string or line (if multiline is enabled).</i></p>
+
+					<li><strong>$</strong></li>
+					<p><i> This matches the end position of the string or long (again with multiline being enabled)</i></p>
+
+					<li><strong>\b</strong></li>
+					<p><i>This will match the position of a word boundary (whitespace, punctuation, or the start or end of the string)</i></p>
+
+					<li><strong>\B</strong></li>
+					<p><i> This will match the position that is not a word boundary.</i></p>
+
+					<li><strong>\000 - \377</strong></li>
+					<p><i>This will search through any octal escaped character (a special character) that has a value less than (\377).</i></p>
+
+					<li><strong>\x00 - \xFF</strong></li>
+					<p><i> This will search for any Hex escaped character (similar to octal).</i></p>
+
+					<li><strong>\u0000 - \uFFFF</strong></li>
+					<p><i>This will match any unicode escaped character. </i></p>
+
+					<li><strong>\cA - \cZ</strong></li>
+					<p><i>This will match any ctrl character.</i></p>
+
+					<li><strong>\t</strong></li>
+					<p><i>This will match any tab character</i></p>
+
+					<li><strong>()</strong></li>
+					<p><i>This groups multiple tokens together and makes a capture group for extracting a substring or using a back reference.</i></p>
+
+					<li><strong>/1 - /anynumber</strong></li>
+					<p><i>This will show the results of a previous capture group. Review the reference for further understanding.</i></p>
+
+					<li><strong>(?:)</strong></li>
+					<p><i>This groups multiple tokens together while not creating a capture group</i></p>
+
+					<li><strong>(?=)</strong></li>
+					<p><i>This will match a group after the main expression while not including the result.</i></p>
+
+					<li><strong>(?!)</strong></li>
+					<p><i>This will search through every group that does not match.</i></p>
+
+					<li><strong>+</strong></li>
+					<p><i>This will match through one or more of the preceding token.</i></p>
+
+					<li><strong>*</strong></li>
+					<p><i>This will match through 0 or more of the preceding token.</i></p>
+
+					<li><strong>{#,#}}</strong></li>
+					<p><i>This matches through the specific quantity given in the curly braces. {1,2} matches 1 to 2, {1} will match just 1, and {2,} will match two or more.</i></p>
+
+					<li><strong>?</strong></li>
+					<p><i>If after a token this will match 0 or one of the preceding token, making it optional. If after a quantifier, this will match as few characters as possible as opposed to how quantifiers generally match as many as possible.</i></p>
+
+				</ol>
+			</div>
+		</section>
+		<footer>
+		</br>
+			<a href="mailto:clarkhinchcliff@hotmail.com">clarkhinchcliff@hotmail.com</a>
+		</br>
+			<a href="#backToTop">Back to Top</a>
+		</footer>
+	</body>
+</html>
