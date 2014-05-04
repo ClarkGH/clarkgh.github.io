@@ -65,15 +65,15 @@ header nav a {
 }
 
 #sidebar h1 {
-  font-size: 1.5em;
+  font-size: 1.7em;
   font-weight: bold;
   color: #F5F5F5;
-  text-decoration: underline;
 }
 
 #sidebar a {
   color: #001E28;
   line-height: 200%;
+  text-decoration: none;
 }
 
 section {
