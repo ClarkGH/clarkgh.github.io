@@ -65,9 +65,35 @@
 		</div>
 		<section>
 			<div class="wrapper">
-				<h1>Welcome</h1>
-				<p>&nbsp&nbsp&nbsp&nbsp Hello, and welcome to my Dev Bootcamp assignment blog. This is where I'll be posting all of my cultural and technical Dev Bootcamp blog assignments.</p>
-				<p>&nbsp&nbsp&nbsp&nbsp By way of introduction, my name is Clark Hinchcliff, and I am currently studying Web Development at Dev Bootcamp. I am extremely excited to learn and grow through this program. Please continue to visit my blog as it continues to improve and become a wonderful work of art. I will be taking screenshots and posting them to my blogger account as a means of keeping track of my progress here at DBC and in the future as a web developer.</p>
+				<h1>Recursion</h1>
+				<p>&nbsp&nbsp&nbsp&nbsp Recursion occurs when a program calls itself directly or indirectly. Recursion is supported by most programming languages where the language allows a function to call itself inside of its text. Recursion allows the ability to define an infinite number of objects and perform an infinite number of computations.</p>
+
+				<p>&nbsp&nbsp&nbsp&nbsp There are a few functional languages that rely on recursion as they have no constructs defined to loop with. These languages have the ability to solve the same problems without the looping constructs case, while, for, etc..</p>
+
+				<p> In order to create a recursive program, there are basic steps that must always be followed: </p>
+
+				<ol>
+					<li><i>Begin the initialization of the algorithm.</i></li>
+					<li><i>Ensure that the current value matches the original case.</i></li>
+					<li><i>Redefine the problem into simpler sub categories (refactor).</i></li>
+					<li><i>Test the smaller algorithms.</i></li>
+					<li><i>Combine all of the results of the sub categories and find the answer.</i></li>
+					<li><i>Return the answer/result.</i></li>
+				</ol>
+
+				<p>&nbsp&nbsp&nbsp&nbsp Below you will see a recursive Ruby function. In this function I use STDIN.gets.chomp(), for a better understanding feel free to click <a href="http://stackoverflow.com/questions/10523536/whats-the-difference-between-gets-chomp-vs-stdin-gets-chomp">here.</a></p>
+
+				<ul> 
+					<li><strong>Recursion in Ruby:</strong></li>
+					<p><i>def eat_food(food) <br>
+						&nbsp&nbsp print food <br>
+						&nbsp&nbsp eaten = STDIN.gets.chomp <br>
+						&nbsp&nbsp eaten = eat_food food if eaten.empty?<br>
+						&nbsp&nbsp return eaten<br>end</i></p>
+				</ul>
+
+				<p>&nbsp&nbsp&nbsp&nbsp The above shows us a recursive function. It calls iteself and will loop again if the input given is empty without using any looping constructs.</p>
+
 			</div>
 		</section>
 		<footer>
