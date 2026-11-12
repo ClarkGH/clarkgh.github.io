@@ -1,0 +1,75 @@
+---
+// Hero wireframe: an icosahedron drawn with raw WebGL 2 and hand-written math (src/scripts/wireframe.ts).
+---
+
+<figure class="solid" id="solid">
+  <canvas
+    role="img"
+    tabindex="0"
+    aria-label="Wireframe icosahedron. Drag it, tap a side of it, or use the arrow keys to turn it. Space starts or stops the spin."
+  ></canvas>
+  <figcaption>Drawn with WebGL&nbsp;2 and some hand-written quaternion math. Drag it or tap it to turn it.</figcaption>
+  <!-- Outside the caption, so it isn't read as part of the figure's name. Its space is held from the
+       first paint (visibility, not display) so showing it doesn't shift the layout. -->
+  <button class="spin-toggle" type="button" data-pending>Stop spinning</button>
+</figure>
+
+<script>
+  import { mountWireframe } from '../scripts/wireframe';
+
+  const figure = document.querySelector<HTMLElement>('#solid');
+  if (figure) mountWireframe(figure);
+</script>
+
+<style>
+  .solid {
+    margin: 0;
+    justify-self: center;
+    width: 100%;
+    max-width: 30rem;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    cursor: grab;
+    /* Vertical swipes scroll the page and pinches zoom it; horizontal drags turn the solid. */
+    touch-action: pan-y pinch-zoom;
+    border-radius: 50%;
+  }
+  canvas:active {
+    cursor: grabbing;
+  }
+  figcaption {
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--muted);
+    max-width: 30ch;
+    margin: 0.75rem auto 0;
+    text-align: center;
+    line-height: 1.45;
+  }
+  .spin-toggle {
+    display: block;
+    margin: 0.4rem auto 0;
+    padding: 0.25rem 0.5rem;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: var(--wire);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    cursor: pointer;
+  }
+  .spin-toggle:hover {
+    text-decoration-thickness: 2px;
+  }
+  .spin-toggle[data-pending] {
+    visibility: hidden; /* not focusable or clickable either, until the script is ready */
+  }
+  .no-gl canvas,
+  .no-gl .spin-toggle {
+    display: none;
+  }
+</style>

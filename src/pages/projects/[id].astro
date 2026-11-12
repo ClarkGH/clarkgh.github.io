@@ -1,0 +1,101 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { EXTERNAL_REL } from '../../lib/externalLinks';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+// Social cards: a JPEG copy of the screenshot (WebP isn't read everywhere that unfurls links).
+const og = project.data.image
+  ? await getImage({ src: project.data.image, format: 'jpeg', width: Math.min(1200, project.data.image.width) })
+  : undefined;
+---
+
+<Base
+  title={project.data.title}
+  description={project.data.summary}
+  type="article"
+  image={og && { src: og.src, alt: project.data.imageAlt ?? '' }}
+>
+  <article>
+    <a href="/#projects" class="back">All projects</a>
+    <h1>{project.data.title}</h1>
+    <p class="summary">{project.data.summary}</p>
+    <p class="stack">{project.data.stack.join(', ')}</p>
+    <p class="repo">
+      <a href={project.data.repo} rel={EXTERNAL_REL}>View the source on GitHub</a>
+    </p>
+    {
+      project.data.image && (
+        <Image
+          class="shot"
+          src={project.data.image}
+          alt={project.data.imageAlt ?? ''}
+          widths={[480, 840, 1280]}
+          sizes="(min-width: 46rem) 42rem, calc(100vw - 2rem)"
+          loading="eager"
+          fetchpriority="high"
+        />
+      )
+    }
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  article {
+    max-width: 42rem;
+    padding-top: 1.5rem;
+  }
+  .back {
+    font-size: 1rem;
+    color: var(--muted);
+    font-style: italic;
+    text-decoration: none;
+  }
+  .back:hover {
+    color: var(--text);
+  }
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 3.75rem);
+    font-weight: 330;
+    letter-spacing: -0.022em;
+    margin: 1rem 0 0.75rem;
+  }
+  .summary {
+    font-size: 1.375rem;
+    line-height: 1.5;
+    margin: 0 0 0.5rem;
+  }
+  .stack {
+    margin: 0;
+  }
+  .repo {
+    margin: 1.25rem 0 0;
+  }
+  .shot {
+    width: 100%;
+    margin: 2rem 0 0.5rem;
+    background: var(--well);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+  .prose :global(h2) {
+    font-size: 1.6rem;
+    margin: 2.5rem 0 0.75rem;
+  }
+  .prose :global(li) {
+    margin-bottom: 0.4rem;
+  }
+  .prose :global(li::marker) {
+    color: var(--muted);
+  }
+</style>

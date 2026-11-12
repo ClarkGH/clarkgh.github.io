@@ -1,0 +1,157 @@
+# Performance and SEO
+
+How the site keeps Lighthouse happy: fast first paint (LCP), nothing jumping around (CLS), and the metadata search engines and link previews read.
+
+## Table of Contents
+
+- [Where it lives](#where-it-lives)
+- [The big picture](#the-big-picture)
+- [Fonts](#fonts)
+- [CSS](#css)
+- [Images](#images)
+- [JavaScript](#javascript)
+- [Layout shift](#layout-shift)
+- [Metadata](#metadata)
+    - [Social cards](#social-cards)
+    - [Structured data](#structured-data)
+    - [Sitemap and robots.txt](#sitemap-and-robotstxt)
+- [Deploy](#deploy)
+- [Measuring it](#measuring-it)
+    - [Last run](#last-run)
+- [Not built yet](#not-built-yet)
+- [Navigation](#navigation)
+
+## Where it lives
+
+| File | Job |
+| --- | --- |
+| [astro.config.mjs](../astro.config.mjs) | The self-hosted font, `inlineStylesheets: 'always'`, the site URL |
+| [Base.astro](../src/layouts/Base.astro) | `<Font>` preload, title, description, canonical, Open Graph, Twitter card, JSON-LD |
+| [index.astro](../src/pages/index.astro), [[id].astro](../src/pages/projects/[id].astro) | Responsive `<Image>`s, per-page descriptions and social cards |
+| [sitemap.xml.ts](../src/pages/sitemap.xml.ts) | The sitemap |
+| `public/robots.txt`, `public/og.png` | Crawl rules, and the default social card |
+| [deploy.yml](../.github/workflows/deploy.yml) | Build and deploy on push to `main` |
+
+## The big picture
+
+```mermaid
+flowchart LR
+    req(["request /"]) --> html["HTML<br/>CSS inlined, font preload,<br/>meta + JSON-LD"]
+    html --> font["Piazzolla woff2<br/>(same origin, preloaded)"]
+    html --> paint(["first paint<br/>in the metric-matched fallback"])
+    font --> swap(["swap to Piazzolla<br/>barely moves anything"])
+    html --> js["one small module script<br/>(deferred)"]
+    html --> imgs["WebP thumbnails<br/>(lazy, sized by srcset)"]
+```
+
+## Fonts
+
+Piazzolla comes from Google Fonts, but it's **downloaded at build time** by Astro's `fonts` config and served from this site. That does three things:
+
+- **No third-party request on the critical path.** Before, the browser had to fetch CSS from fonts.googleapis.com and then the font from fonts.gstatic.com before any text could be drawn in Piazzolla.
+- **A preload.** `<Font preload={[{ style: 'normal' }]} />` adds a `<link rel="preload">` for the upright face, which draws the `<h1>` and the body. The headline types itself in, so the hero paragraph may be the LCP element instead; check it in PageSpeed after deploy. The italic face loads when it's needed.
+- **A metric-matched fallback.** Astro generates an `@font-face` for a local fallback (Times New Roman) with `size-adjust`, `ascent-override` and `descent-override` tuned to Piazzolla's measurements. With `font-display: swap`, text paints straight away in the fallback, and when Piazzolla arrives the lines barely move.
+
+The font is variable. The config asks for weights 300 to 600 (what the site uses) and the optical-size axis (8 to 30), which `font-optical-sizing: auto` uses to adjust letterforms by size. That's one file per style, about 50 KB each.
+
+## CSS
+
+`build.inlineStylesheets: 'always'` puts all the CSS (about 10 KB) in a `<style>` in each page. A separate stylesheet would block first paint on an extra round trip; at this size, inlining is cheaper, even though it isn't cached across pages.
+
+## Images
+
+Covered in [content.md](content.md#screenshots). In short: Astro's `<Image>` makes WebP at the sizes each spot needs, with `srcset` and `sizes` so a phone never downloads the desktop file. The terminal screenshot went from a 147 KB PNG to a 4 KB thumbnail. Project-page screenshots load with `fetchpriority="high"`, and home page thumbnails are lazy.
+
+## JavaScript
+
+There's very little, and none of it blocks rendering:
+
+- **The theme script** is a few bytes, inline in the `<head>`. It has to run before paint (see [site-shell.md](site-shell.md#no-flash-on-load)).
+- **Base's script** (theme toggle, menu) and **the wireframe** are module scripts, which are deferred by default. Astro inlines Base's because it's tiny. The wireframe module is about 6 KB and loads as a file.
+- The wireframe's loop only runs while something moves, and stops while the canvas is off screen ([wireframe.md](wireframe.md#when-the-loop-runs)).
+
+## Layout shift
+
+Things that would make content jump, and how each is held still:
+
+| Would shift | Held by |
+| --- | --- |
+| Font swap | The metric-matched fallback |
+| Images loading | `width`/`height` from the source file, plus CSS `aspect-ratio` on thumbnails |
+| The wireframe canvas | `aspect-ratio: 1` |
+| The typewriter headline | Every letter is laid out from the start and only made visible, see [site-shell.md](site-shell.md#the-typewriter-headline) |
+| The spin button appearing | Its space is reserved with `visibility: hidden` until the script runs |
+| Theme applied late | The inline pre-paint theme script |
+
+## Metadata
+
+Every page gets, from [Base.astro](../src/layouts/Base.astro):
+
+- **`<title>`:** "Clark Hinchcliff" on the home page, "Project – Clark Hinchcliff" elsewhere.
+- **`<meta name="description">`:** the project's `summary`, or the home page's own description.
+- **`<link rel="canonical">`:** the page's absolute URL, so crawlers treat it as the one true address.
+- **`<html lang="en">`.**
+
+### Social cards
+
+Open Graph and Twitter tags (`og:title`, `og:description`, `og:url`, `og:type`, `og:image`, `og:image:alt`, `twitter:card = summary_large_image`) control the preview when a link is shared.
+
+- **Project pages** use their screenshot, converted to JPEG by `getImage` in [[id].astro](../src/pages/projects/[id].astro), with the project's `imageAlt`.
+- **Everything else** uses `public/og.png`: 1200×630, the name and tagline in Piazzolla next to the icosahedron, drawn with the same construction as the hero. To change the copy, regenerate the image.
+
+`og:type` is `profile` on the home page and `article` on project pages.
+
+### Structured data
+
+The home page carries JSON-LD (schema.org) describing a `Person` (name, job title, GitHub and LinkedIn as `sameAs`) and the `WebSite`, linked by `@id`. This is what lets a search engine connect the site with the profiles. It's escaped before it's written into the page, see [security.md](security.md#structured-data).
+
+### Sitemap and robots.txt
+
+- **`/sitemap.xml`** is a 10-line endpoint rather than `@astrojs/sitemap`: it lists the home page and every project. New projects show up on their own.
+- **`/robots.txt`** allows everything and points to the sitemap.
+- Every page also has `<link rel="sitemap">`.
+
+## Deploy
+
+[deploy.yml](../.github/workflows/deploy.yml) runs on push to `main` (or by hand). `withastro/action` installs with pnpm and runs `pnpm build`, which runs the specs, `astro check`, the build and the CSP check, in that order. Any failure stops the deploy. `actions/deploy-pages` publishes `dist/`.
+
+The workflow's permissions are the minimum Pages needs: `contents: read`, `pages: write`, `id-token: write`.
+
+## Measuring it
+
+Lighthouse needs Chrome. Either:
+
+- run PageSpeed Insights (pagespeed.web.dev) on the live URL, or
+- `pnpm build && pnpm preview`, then Lighthouse against the preview. Don't measure `pnpm dev`: it's unbundled and unoptimized. Without desktop Chrome, Playwright's headless shell works:
+
+  ```bash
+  CHROME_PATH=~/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell \
+    pnpm dlx lighthouse http://localhost:4321/ --chrome-flags="--headless=new" --view
+  ```
+
+### Last run
+
+2026-11-12, mobile preset, against the local preview.
+
+| Page | Performance | Accessibility | Best Practices | SEO |
+| --- | --- | --- | --- | --- |
+| `/` | 95–99 | 100 | 100 | 92 |
+| `/projects/smackhem/` | 100 | 100 | 100 | 92 |
+
+CLS is 0 and LCP is 0.6–1.6 s on both. Two things to know when reading the numbers:
+
+- **SEO 92 is a Lighthouse quirk.** Its `robots-txt` audit fetches `/robots.txt` from inside the page, and `connect-src 'none'` blocks that. Crawlers fetch it directly, where the CSP doesn't apply. Don't loosen the CSP for it.
+- **Home page blocking time (100–240 ms) is the wireframe's WebGL setup**: a couple of 100–150 ms tasks at startup. The headless shell draws WebGL in software, under a 4× CPU slowdown, so this overstates a phone with a GPU. The idle spin isn't the cause: with reduced motion forced on (no loop), blocking time was the same or higher. Its main-thread work comes in small frames that don't block.
+
+## Not built yet
+
+- **Long cache lifetimes.** GitHub Pages sets its own cache headers (10 minutes), even for hashed files in `/_astro/`. That only matters for repeat visits.
+
+## Navigation
+
+- **[Index](INDEX.md)** - Overview and documentation map
+- **[Project Structure](project-structure.md)** - Where every file lives and why, plus testing
+- **[Site Shell](site-shell.md)** - The layout: theme, header, footer, learning menu, accessibility
+- **[Wireframe](wireframe.md)** - The hero icosahedron: math, rendering, motion and input
+- **[Content](content.md)** - Projects as Markdown, screenshots, alt text, adding a project
+- **[Security](security.md)** - CSP, referrer policy, external links, the CSP check

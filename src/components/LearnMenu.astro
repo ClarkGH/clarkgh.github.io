@@ -1,0 +1,196 @@
+---
+import { EXTERNAL_REL } from '../lib/externalLinks';
+
+const sections = [
+  {
+    heading: 'Read',
+    items: [
+      ['WebGL2 Fundamentals', 'https://webgl2fundamentals.org/', 'WebGL 2 from the first triangle up, with no libraries.'],
+      ['Learn OpenGL', 'https://learnopengl.com/', 'Lighting, shadows and PBR, explained well enough to port to WebGL.'],
+      ['The Book of Shaders', 'https://thebookofshaders.com/', 'Fragment shaders, one interactive example at a time.'],
+      ['Immersive Math', 'https://immersivemath.com/', 'A linear algebra textbook with interactive figures.'],
+      ['Game Programming Patterns', 'https://gameprogrammingpatterns.com/', 'Robert Nystrom on game loops, components and more. Free online.'],
+      ['Eloquent JavaScript', 'https://eloquentjavascript.net/', 'The language, properly, by Marijn Haverbeke. Free online.'],
+      ['Red Blob Games', 'https://www.redblobgames.com/', 'Interactive explainers on grids, pathfinding and procedural maps.'],
+      ['MDN Web Docs', 'https://developer.mozilla.org/en-US/docs/Learn_web_development', 'HTML, CSS and JavaScript from the people who document the web.'],
+      ['javascript.info', 'https://javascript.info/', 'The modern JavaScript tutorial, from basics to the event loop.'],
+      ['web.dev Learn', 'https://web.dev/learn', 'Courses on CSS, accessibility, forms, images and performance.'],
+      ['Full Stack Open', 'https://fullstackopen.com/en/', 'University of Helsinki course: React, Node, Express, databases and testing.'],
+      ['High Performance Browser Networking', 'https://hpbn.co/', 'Ilya Grigorik on TCP, TLS, HTTP/2 and what the browser does with them.'],
+      ['Use The Index, Luke', 'https://use-the-index-luke.com/', 'SQL indexing and query performance, written for developers.'],
+      ['The Twelve-Factor App', 'https://12factor.net/', 'A short checklist for building services that deploy cleanly.'],
+    ],
+  },
+  {
+    heading: 'Listen',
+    items: [
+      ['Syntax', 'https://syntax.fm/', 'Web development news and techniques.'],
+      ['ShopTalk Show', 'https://shoptalkshow.com/', 'Front-end design and development, from people who build sites.'],
+      ['CoRecursive', 'https://corecursive.com/', 'The stories behind software and the people who wrote it.'],
+      ['The Changelog', 'https://changelog.com/podcast', 'Open source and the people who maintain it.'],
+      ['Software Engineering Radio', 'https://se-radio.net/', 'Long interviews on architecture, databases and backend systems.'],
+    ],
+  },
+  {
+    heading: 'Watch',
+    items: [
+      ['Essence of Linear Algebra', 'https://www.3blue1brown.com/topics/linear-algebra', "3Blue1Brown's series on what matrices actually do."],
+      ['Visualizing quaternions', 'https://eater.net/quaternions', '3Blue1Brown and Ben Eater, with interactive videos.'],
+      ['Freya Holmér', 'https://www.youtube.com/@acegikmo', 'Math for game developers, splines and shaders.'],
+      ['Sebastian Lague', 'https://www.youtube.com/@SebastianLague', 'Coding Adventures: building ambitious things from scratch.'],
+      ['The Coding Train', 'https://thecodingtrain.com/', 'Creative coding challenges in JavaScript.'],
+      ['GDC Vault, free talks', 'https://gdcvault.com/free', 'Game developers on how they built what they built.'],
+      ['Kevin Powell', 'https://www.youtube.com/@KevinPowell', 'CSS layout and the reasons behind it, explained patiently.'],
+      ['Hussein Nasser', 'https://www.youtube.com/@hnasr', 'Backend engineering: databases, proxies, protocols and how they fail.'],
+    ],
+  },
+] as const;
+---
+
+<dialog class="menu" id="learn" aria-labelledby="learn-title">
+  <div class="menu-inner">
+    <div class="menu-top">
+      <h2 id="learn-title">Free places to learn</h2>
+      <button class="icon-btn close" type="button">Close</button>
+    </div>
+    <p class="intro">Graphics, math and the web, front and back. Everything here costs nothing to read, hear or watch.</p>
+    {
+      sections.map(({ heading, items }) => (
+        // Native <details>: keyboard, Enter/Space and the expanded state come for free, no script.
+        <details open>
+          <summary>{heading}</summary>
+          <ul>
+            {items.map(([name, href, note]) => (
+              <li>
+                <a href={href} rel={EXTERNAL_REL}>
+                  {name}
+                </a>
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ))
+    }
+  </div>
+</dialog>
+
+<style>
+  /* <dialog> gives Esc, focus trapping and the backdrop for free. */
+  .menu {
+    position: fixed;
+    inset: 0 0 0 auto;
+    margin: 0;
+    width: min(28rem, 100%); /* 100%, not 100vw: vw includes the scrollbar */
+    height: 100dvh;
+    max-height: none;
+    max-width: none;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--rule);
+    background: var(--well);
+    color: var(--text);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .menu::backdrop {
+    background: var(--scrim);
+  }
+  .menu[open] {
+    animation: sheet-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @keyframes sheet-in {
+    from {
+      transform: translateX(100%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu[open] {
+      animation: none;
+    }
+  }
+  /* Fills the sheet so clicks on its empty lower part don't count as backdrop clicks. */
+  .menu-inner {
+    min-height: 100%;
+    padding: 1.5rem clamp(1.25rem, 5vw, 2rem) 3rem;
+  }
+  .menu-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  h2 {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+  .close {
+    font-size: 1rem;
+    font-style: italic;
+  }
+  .intro {
+    color: var(--muted);
+    margin: 0.75rem 0 0;
+    font-size: 1.05rem;
+  }
+  details {
+    margin-top: 2.25rem;
+  }
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    cursor: pointer;
+    list-style: none; /* hide the default triangle; ours is on the right */
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.1;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '';
+    width: 0.45em;
+    height: 0.45em;
+    margin-right: 0.2em;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    transform: translateY(-0.15em) rotate(45deg); /* points down: open */
+    transition: transform 150ms ease;
+  }
+  details:not([open]) > summary::after {
+    transform: rotate(-45deg); /* points right: closed */
+  }
+  summary:hover::after {
+    border-color: var(--text);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    summary::after {
+      transition: none;
+    }
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    padding: 0.6rem 0;
+    line-height: 1.4;
+  }
+  li a {
+    color: var(--text);
+    text-decoration-color: var(--wire);
+  }
+  li span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-style: italic;
+    margin-top: 0.15rem;
+  }
+</style>

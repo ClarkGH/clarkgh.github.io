@@ -1,0 +1,248 @@
+---
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+import LearnMenu from '../components/LearnMenu.astro';
+import { PROFILE_REL } from '../lib/externalLinks';
+import { THEME_INIT } from '../lib/themeInit';
+
+const GITHUB = 'https://github.com/ClarkGH';
+const LINKEDIN = 'https://www.linkedin.com/in/clarkgh/';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Open Graph type: the home page is a profile, project pages are articles. */
+  type?: 'profile' | 'article';
+  /** Social card image (a site-relative URL) and its alt text. Defaults to the site card. */
+  image?: { src: string; alt: string };
+}
+
+const {
+  title,
+  description = 'Clark Hinchcliff, a frontend engineer, and the projects he’s been building and learning from.',
+  type = 'profile',
+  image = { src: '/og.png', alt: 'Clark Hinchcliff, “Frontend engineer. Learning by building.”, beside a rose wireframe icosahedron.' },
+} = Astro.props;
+const isHome = Astro.url.pathname === '/';
+const fullTitle = isHome ? 'Clark Hinchcliff' : `${title} – Clark Hinchcliff`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image.src, Astro.site);
+
+// Structured data for the home page: who the site is about, and the site itself.
+const jsonLd = isHome && {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${Astro.site}#clark`,
+      name: 'Clark Hinchcliff',
+      jobTitle: 'Frontend engineer',
+      url: Astro.site?.href,
+      sameAs: [GITHUB, LINKEDIN],
+    },
+    {
+      '@type': 'WebSite',
+      name: 'Clark Hinchcliff',
+      url: Astro.site?.href,
+      author: { '@id': `${Astro.site}#clark` },
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- No Referer header on any request or link, Markdown links included. See docs/security.md. -->
+    <meta name="referrer" content="no-referrer" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <meta property="og:site_name" content="Clark Hinchcliff" />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={image.alt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#1c1a33" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {
+      // Escape "<" so no string in the data can close the <script> element early.
+      jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+    }
+    <!-- Dark by default; a saved choice wins. Inline and before paint, so there's no flash. -->
+    <script is:inline set:html={THEME_INIT} />
+    <!-- Self-hosted Piazzolla (astro.config.mjs). Preload only the upright face: it draws the h1 and body. -->
+    <Font cssVariable="--font-piazzolla" preload={[{ style: 'normal' }]} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="wrap site-header">
+      <a href="/" class="brand">Clark Hinchcliff</a>
+      <nav>
+        <a class="nav-projects" href="/#projects">Projects</a>
+        <a class="nav-social" href={GITHUB} rel={PROFILE_REL}>GitHub</a>
+        <a class="nav-social" href={LINKEDIN} rel={PROFILE_REL}>LinkedIn</a>
+        <button class="icon-btn theme-btn" type="button" aria-label="Switch to light mode">
+          <!-- A half-lit disc: the same idea as the wireframe's depth shading. -->
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+            <path d="M10 2a8 8 0 0 1 0 16z" fill="currentColor"></path>
+          </svg>
+        </button>
+        <button
+          class="icon-btn burger"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="learn"
+          aria-expanded="false"
+          aria-label="Open free learning resources"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M3 5h14M3 10h14M3 15h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            ></path>
+          </svg>
+        </button>
+      </nav>
+    </header>
+    <LearnMenu />
+    <main class="wrap" id="main">
+      <slot />
+    </main>
+    <footer class="wrap site-footer">
+      <p>
+        Clark Hinchcliff, {new Date().getFullYear()}. Built with Astro and hosted on GitHub Pages.
+        <!-- Always here, so the profiles are reachable on phones, where the header drops them. -->
+        <span class="elsewhere">
+          Find me on <a href={GITHUB} rel={PROFILE_REL}>GitHub</a> and <a href={LINKEDIN} rel={PROFILE_REL}>LinkedIn</a>.
+        </span>
+      </p>
+    </footer>
+  </body>
+</html>
+
+<script>
+  const root = document.documentElement;
+  const themeBtn = document.querySelector<HTMLButtonElement>('.theme-btn');
+  const syncThemeLabel = () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    themeBtn?.setAttribute('aria-label', `Switch to ${next} mode`);
+  };
+  syncThemeLabel();
+  themeBtn?.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    try {
+      localStorage.setItem('theme', root.dataset.theme);
+    } catch {}
+    syncThemeLabel();
+    document.dispatchEvent(new Event('themechange'));
+  });
+
+  const menu = document.querySelector<HTMLDialogElement>('#learn');
+  const burger = document.querySelector<HTMLButtonElement>('.burger');
+  if (menu && burger) {
+    burger.addEventListener('click', () => {
+      menu.showModal();
+      burger.setAttribute('aria-expanded', 'true');
+    });
+    menu.querySelector('.close')?.addEventListener('click', () => menu.close());
+    // A click on the backdrop lands on the dialog element itself.
+    menu.addEventListener('click', (ev) => {
+      if (ev.target === menu) menu.close();
+    });
+    menu.addEventListener('close', () => {
+      burger.setAttribute('aria-expanded', 'false');
+      burger.focus();
+    });
+  }
+</script>
+
+<style>
+  /* Off-screen until it gets keyboard focus. */
+  .skip {
+    position: absolute;
+    left: 1rem;
+    top: -10rem;
+    z-index: 10;
+    padding: 0.5rem 0.9rem;
+    background: var(--well);
+    color: var(--text);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+  .skip:focus {
+    top: 1rem;
+  }
+  .site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+  .brand {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05rem;
+    white-space: nowrap;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 1rem;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+  nav a:hover {
+    color: var(--text);
+  }
+  /* Narrow screens: the profile links move to the footer (always there) so the header fits on one line. */
+  @media (max-width: 40rem) {
+    .nav-social {
+      display: none;
+    }
+  }
+  @media (max-width: 30rem) {
+    nav {
+      gap: 1rem;
+    }
+    /* The project list sits right below the hero on small screens. */
+    .nav-projects {
+      display: none;
+    }
+  }
+  .elsewhere {
+    display: block;
+    margin-top: 0.35rem;
+  }
+  .icon-btn svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    display: block;
+  }
+  main {
+    min-height: 70vh;
+  }
+  .site-footer {
+    margin-top: 4rem;
+    padding-bottom: 2.5rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  /* Rule on the text, not the wrapper, so it lines up with the content edges. */
+  .site-footer p {
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+</style>
