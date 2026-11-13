@@ -64,7 +64,7 @@ src/
 | --- | --- |
 | `astro.config.mjs` | Site URL, self-hosted font, inlined CSS, CSP directives |
 | `scripts/checkCsp.mjs` | Post-build gate: runs `src/lib/cspAudit.ts` over every page in `dist/` |
-| `public/` | Copied as-is: `favicon.svg`, `og.png` (social card), `robots.txt` |
+| `public/` | Copied as-is: `favicon.svg`, `og.png` (social card), `robots.txt`, `CNAME` (custom domain) |
 | `.github/workflows/deploy.yml` | Builds and deploys to GitHub Pages on push to `main` |
 | `docs/` | These docs |
 

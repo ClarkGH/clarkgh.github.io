@@ -1,6 +1,6 @@
 # Portfolio
 
-Clark Hinchcliff's portfolio, live at https://clarkgh.github.io.
+Clark Hinchcliff's portfolio, live at https://clarkhinchcliff.com.
 
 ## Table of Contents
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://clarkgh.github.io/sitemap.xml
+Sitemap: https://clarkhinchcliff.com/sitemap.xml

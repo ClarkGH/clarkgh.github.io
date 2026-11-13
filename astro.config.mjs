@@ -6,9 +6,9 @@ import { THEME_INIT } from './src/lib/themeInit.ts';
 /** @type {`sha256-${string}`} */
 const themeInitHash = `sha256-${createHash('sha256').update(THEME_INIT).digest('base64')}`;
 
-// User site (ClarkGH.github.io repo) is served from the domain root, so no `base` is needed.
+// User site (ClarkGH.github.io repo) on the custom domain in public/CNAME, served from the root, so no `base` is needed.
 export default defineConfig({
-  site: 'https://clarkgh.github.io',
+  site: 'https://clarkhinchcliff.com',
   // Shiki's inline styles break under the CSP, and no write-up has code blocks yet.
   markdown: { syntaxHighlight: false },
   // GitHub Pages can't send headers, so the policy ships as a <meta> tag. Astro hashes every

@@ -1,6 +1,6 @@
 # portfolio
 
-Source for https://clarkgh.github.io, built with [Astro](https://astro.build) and deployed to GitHub Pages.
+Source for https://clarkhinchcliff.com, built with [Astro](https://astro.build) and deployed to GitHub Pages.
 
 ## Run locally
 
