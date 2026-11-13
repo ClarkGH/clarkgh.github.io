@@ -7,6 +7,7 @@ How the site keeps Lighthouse happy: fast first paint (LCP), nothing jumping aro
 - [Where it lives](#where-it-lives)
 - [The big picture](#the-big-picture)
 - [Fonts](#fonts)
+    - [Fallback fonts](#fallback-fonts)
 - [CSS](#css)
 - [Images](#images)
 - [JavaScript](#javascript)
@@ -38,7 +39,7 @@ How the site keeps Lighthouse happy: fast first paint (LCP), nothing jumping aro
 flowchart LR
     req(["request /"]) --> html["HTML<br/>CSS inlined, font preload,<br/>meta + JSON-LD"]
     html --> font["Piazzolla woff2<br/>(same origin, preloaded)"]
-    html --> paint(["first paint<br/>in the metric-matched fallback"])
+    html --> paint(["first paint<br/>in the size-matched fallback"])
     font --> swap(["swap to Piazzolla<br/>barely moves anything"])
     html --> js["one small module script<br/>(deferred)"]
     html --> imgs["WebP thumbnails<br/>(lazy, sized by srcset)"]
@@ -50,9 +51,37 @@ Piazzolla comes from Google Fonts, but it's **downloaded at build time** by Astr
 
 - **No third-party request on the critical path.** Before, the browser had to fetch CSS from fonts.googleapis.com and then the font from fonts.gstatic.com before any text could be drawn in Piazzolla.
 - **A preload.** `<Font preload={[{ style: 'normal' }]} />` adds a `<link rel="preload">` for the upright face, which draws the `<h1>` and the body. The headline types itself in, so the hero paragraph may be the LCP element instead; check it in PageSpeed after deploy. The italic face loads when it's needed.
-- **A metric-matched fallback.** Astro generates an `@font-face` for a local fallback (Times New Roman) with `size-adjust`, `ascent-override` and `descent-override` tuned to Piazzolla's measurements. With `font-display: swap`, text paints straight away in the fallback, and when Piazzolla arrives the lines barely move.
+- **Size-matched fallbacks.** With `font-display: swap`, text paints straight away in a local serif, then swaps to Piazzolla when it arrives. The fallbacks are scaled so the lines wrap in the same places, and the swap doesn't move the layout. See [Fallback fonts](#fallback-fonts).
 
 The font is variable. The config asks for weights 300 to 600 (what the site uses) and the optical-size axis (8 to 30), which `font-optical-sizing: auto` uses to adjust letterforms by size. That's one file per style, about 50 KB each.
+
+### Fallback fonts
+
+The `@font-face` rules are at the top of [global.css](../src/styles/global.css). Astro's generated fallback is off (`optimizedFallbacks: false`) because it fell short twice. On 2026-11-13 the live site scored **CLS 0.265** on PageSpeed:
+
+- **It only covers Times New Roman,** which Linux (where PageSpeed runs) and Android don't have. They fell through to their default serif at its natural size.
+- **Its size was computed, not measured,** and came out about 4% narrow even where Times exists.
+
+There are three fallback families, so every common platform has one:
+
+| Family | Matches | Covers |
+| --- | --- | --- |
+| `Piazzolla fallback Times` | Times New Roman, Liberation Serif, Tinos (all the same metrics) | Windows, macOS, iOS, most Linux, ChromeOS |
+| `Piazzolla fallback Noto` | Noto Serif | Android, some Linux |
+| `Piazzolla fallback DejaVu` | DejaVu Serif | Other Linux |
+
+**Why they're split by weight.** Piazzolla's optical sizing makes small text relatively wider than large text. For the Times fallback, a 15px line needs a `size-adjust` of 112% and a 30px line needs 103%, and one `@font-face` can only have one value. The site's light weights are only used for display text, so each family has:
+
+- a **300–350** face for the headlines, tuned until the home headline breaks onto the same lines as Piazzolla at 412, 600, 900, 1100 and 1350px wide;
+- a **351–600** face and an **italic** face, measured at the 19px body size.
+
+`ascent-override` and `descent-override` are Piazzolla's (1110 and 310 per 1000) divided by `size-adjust`.
+
+**The `<h1>`'s width is in `em`, not `ch`.** `13ch` is measured from whichever font is showing, and the fallback's narrower "0" put the headline on an extra line until Piazzolla loaded. `7.82em` is the same 13 of Piazzolla's "0", in every font.
+
+**Re-measure** when the hero copy, the body size, or the font changes. In Chrome, render a long line of the real copy at the real size and weight, once in Piazzolla and once in each fallback (`white-space: nowrap`), and divide the widths: that's `size-adjust`. Then compare the hero's element boxes at the widths above with the fonts blocked and not blocked, and nudge the light values until they match.
+
+**What's left.** On a phone with a high pixel density, text widths round slightly differently, and a line of body text near its break point can still wrap one word differently. Lighthouse's mobile emulation (1.75× pixels) still measured CLS 0.16 from one line of `.proof`, down from 0.26. Layouts match exactly at 1× pixels.
 
 ## CSS
 
@@ -76,7 +105,7 @@ Things that would make content jump, and how each is held still:
 
 | Would shift | Held by |
 | --- | --- |
-| Font swap | The metric-matched fallback |
+| Font swap | The size-matched fallbacks ([Fallback fonts](#fallback-fonts)) |
 | Images loading | `width`/`height` from the source file, plus CSS `aspect-ratio` on thumbnails |
 | The wireframe canvas | `aspect-ratio: 1` |
 | The typewriter headline | Every letter is laid out from the start and only made visible, see [site-shell.md](site-shell.md#the-typewriter-headline) |
@@ -131,16 +160,18 @@ Lighthouse needs Chrome. Either:
 
 ### Last run
 
-2026-11-12, mobile preset, against the local preview.
+2026-11-12, mobile preset, against the local preview. The home page was rerun on 2026-11-13 after the CSP and font changes.
 
-| Page | Performance | Accessibility | Best Practices | SEO |
-| --- | --- | --- | --- | --- |
-| `/` | 95–99 | 100 | 100 | 92 |
-| `/projects/smackhem/` | 100 | 100 | 100 | 92 |
+| Page | Performance | Accessibility | Best Practices | SEO | Agentic Browsing |
+| --- | --- | --- | --- | --- | --- |
+| `/` (2026-11-13) | 99 | 100 | 100 | 100 | 100 |
+| `/projects/smackhem/` (2026-11-12) | 100 | 100 | 100 | 92 | – |
+
+Agentic Browsing counts a missing `/llms.txt` or ARD manifest as "not applicable" once Lighthouse can fetch them, so neither file is needed for the score.
 
 CLS is 0 and LCP is 0.6–1.6 s on both. Two things to know when reading the numbers:
 
-- **SEO 92 is a Lighthouse quirk.** Its `robots-txt` audit fetches `/robots.txt` from inside the page, and `connect-src 'none'` blocks that. Crawlers fetch it directly, where the CSP doesn't apply. Don't loosen the CSP for it.
+- **SEO 92 came from the CSP.** Lighthouse's `robots-txt` audit fetches `/robots.txt` from inside the page, and `connect-src 'none'` blocked it. On 2026-11-13 it became `connect-src 'self'` ([why](security.md#the-directives)), which lets the audit run.
 - **Home page blocking time (100–240 ms) is the wireframe's WebGL setup**: a couple of 100–150 ms tasks at startup. The headless shell draws WebGL in software, under a 4× CPU slowdown, so this overstates a phone with a GPU. The idle spin isn't the cause: with reduced motion forced on (no loop), blocking time was the same or higher. Its main-thread work comes in small frames that don't block.
 
 ## Not built yet

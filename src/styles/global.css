@@ -2,6 +2,114 @@
   "Built from primitives": dusk palette, one accent (the wireframe's rose), Piazzolla throughout.
   Dark is the default; the theme toggle sets data-theme on <html>.
 */
+/*
+  Size-matched fallbacks: until Piazzolla loads, text is set in whichever of these the device has,
+  scaled so lines wrap where Piazzolla's will (no layout shift on the swap). Times New Roman covers
+  Windows, macOS and iOS, and Liberation Serif and Tinos share its metrics. Noto Serif is Android's
+  serif, and DejaVu Serif is common on Linux.
+
+  Piazzolla's optical sizing makes it relatively wider at small sizes, so one size-adjust can't fit
+  every size. Faces are split by weight instead, because the site's light text is all display-sized:
+  - 300–350 (headlines, 38px and up): tuned until the home headline breaks onto the same lines as
+    Piazzolla at 412, 600, 900, 1100 and 1350px wide;
+  - 351–600 and italic: measured at the 19px body size.
+  The values and how to re-measure them are in docs/performance-seo.md#fonts. ascent/descent are
+  Piazzolla's (1110/310 per 1000) ÷ size-adjust.
+*/
+/* Light display text (weight 300–350). */
+@font-face {
+  font-family: 'Piazzolla fallback Times';
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'), local('LiberationSerif'), local('Tinos');
+  font-weight: 300 350;
+  font-style: normal;
+  size-adjust: 102.77%;
+  ascent-override: 108.01%;
+  descent-override: 30.16%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Piazzolla fallback Times';
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'), local('LiberationSerif'), local('Tinos');
+  font-weight: 351 600;
+  font-style: normal;
+  size-adjust: 105.83%;
+  ascent-override: 104.89%;
+  descent-override: 29.29%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Piazzolla fallback Times';
+  src: local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT'), local('Liberation Serif Italic'), local('LiberationSerif-Italic'), local('Tinos Italic');
+  font-weight: 300 600;
+  font-style: italic;
+  size-adjust: 100.38%;
+  ascent-override: 110.58%;
+  descent-override: 30.88%;
+  line-gap-override: 0%;
+}
+/* Light display text (weight 300–350). */
+@font-face {
+  font-family: 'Piazzolla fallback Noto';
+  src: local('Noto Serif'), local('Noto Serif Regular'), local('NotoSerif-Regular');
+  font-weight: 300 350;
+  font-style: normal;
+  size-adjust: 88%;
+  ascent-override: 126.14%;
+  descent-override: 35.23%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Piazzolla fallback Noto';
+  src: local('Noto Serif'), local('Noto Serif Regular'), local('NotoSerif-Regular');
+  font-weight: 351 600;
+  font-style: normal;
+  size-adjust: 90.17%;
+  ascent-override: 123.1%;
+  descent-override: 34.38%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Piazzolla fallback Noto';
+  src: local('Noto Serif Italic'), local('NotoSerif-Italic');
+  font-weight: 300 600;
+  font-style: italic;
+  size-adjust: 87.4%;
+  ascent-override: 127%;
+  descent-override: 35.47%;
+  line-gap-override: 0%;
+}
+/* Light display text (weight 300–350). */
+@font-face {
+  font-family: 'Piazzolla fallback DejaVu';
+  src: local('DejaVu Serif'), local('DejaVuSerif');
+  font-weight: 300 350;
+  font-style: normal;
+  size-adjust: 82.2%;
+  ascent-override: 135.04%;
+  descent-override: 37.71%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Piazzolla fallback DejaVu';
+  src: local('DejaVu Serif'), local('DejaVuSerif');
+  font-weight: 351 600;
+  font-style: normal;
+  size-adjust: 83.58%;
+  ascent-override: 132.81%;
+  descent-override: 37.09%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Piazzolla fallback DejaVu';
+  src: local('DejaVu Serif Italic'), local('DejaVuSerif-Italic');
+  font-weight: 300 600;
+  font-style: italic;
+  size-adjust: 79.06%;
+  ascent-override: 140.4%;
+  descent-override: 39.21%;
+  line-gap-override: 0%;
+}
+
 :root {
   --font: var(--font-piazzolla); /* set up in astro.config.mjs */
   --measure: 34rem;

@@ -153,7 +153,9 @@ const statusLabel = {
     line-height: 1.04;
     letter-spacing: -0.022em;
     margin: 0 0 1.75rem;
-    max-width: 13ch;
+    /* 13 of Piazzolla's "0" (0.601em). In em, not ch: ch is measured from whichever font is showing,
+       so the fallback's narrower "0" wrapped the headline onto an extra line until Piazzolla loaded (CLS). */
+    max-width: 7.82em;
     text-wrap: balance;
   }
   .word {

@@ -60,7 +60,7 @@ Astro's `security.csp` (stable since Astro 6) writes that meta tag into every pa
 default-src 'self'      anything not listed below: same origin only
 img-src 'self'          images: same origin only
 font-src 'self'         fonts: same origin only (they're self-hosted)
-connect-src 'none'      no fetch, XHR or WebSocket at all; the site never makes one
+connect-src 'self'      fetch, XHR and WebSocket to this site only; the site's own code makes none
 object-src 'none'       no plugins (<object>, <embed>)
 base-uri 'self'         a planted <base> can't redirect relative URLs elsewhere
 form-action 'none'      there are no forms, so nothing may submit one
@@ -69,6 +69,8 @@ style-src  'self' 'sha256-…'   same-origin files, plus inline styles by exact 
 ```
 
 There's no `'unsafe-inline'` and no `'unsafe-eval'`. Those are the two things that make most CSPs toothless.
+
+**Why `connect-src` is `'self'` and not `'none'`.** The site never fetches anything, so `'none'` was the tightest setting. But Lighthouse fetches `/robots.txt` and `/llms.txt` from inside the page, so `'none'` blocked its audits and cost the SEO and Agentic Browsing scores (changed 2026-11-13). `'self'` only allows requests back to this site, so it opens no way to send data elsewhere. A script that could misuse it would first have to get past `script-src`, which still allows only same-origin files and hashed inline scripts.
 
 ### Hashes
 
