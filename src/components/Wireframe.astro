@@ -1,5 +1,5 @@
 ---
-// Hero wireframe: an icosahedron drawn with raw WebGL 2 and hand-written math (src/scripts/wireframe.ts).
+// Hero wireframe: an icosahedron drawn with raw WebGL 2 and no math library (src/scripts/wireframe.ts).
 ---
 
 <figure class="solid" id="solid">
@@ -8,7 +8,7 @@
     tabindex="0"
     aria-label="Wireframe icosahedron. Drag it, tap a side of it, or use the arrow keys to turn it. Space starts or stops the spin."
   ></canvas>
-  <figcaption>Drawn with WebGL&nbsp;2 and some hand-written quaternion math. Drag it or tap it to turn it.</figcaption>
+  <figcaption>Drawn with WebGL&nbsp;2, no 3D library. Drag it or tap it to turn it.</figcaption>
   <!-- Outside the caption, so it isn't read as part of the figure's name. Its space is held from the
        first paint (visibility, not display) so showing it doesn't shift the layout. -->
   <button class="spin-toggle" type="button" data-pending>Stop spinning</button>

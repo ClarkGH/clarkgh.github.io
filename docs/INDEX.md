@@ -41,7 +41,7 @@ flowchart LR
 - **Static first.** Everything that can be decided at build time is: pages, image sizes, font files, CSP hashes.
 - **Accessible by default.** WCAG 2.2 AA is the floor, not a feature. See [site-shell.md](site-shell.md#accessibility) and [wireframe.md](wireframe.md#rules-it-follows).
 - **No third parties at runtime.** Fonts are self-hosted, and there are no analytics, embeds or CDNs. That keeps the CSP short and visitors private.
-- **Hand-written where it teaches something.** The wireframe's matrix and quaternion math is written out instead of pulled from a library, on purpose.
+- **No library where it teaches something.** The wireframe's matrix and quaternion math is written out instead of pulled from a library, on purpose.
 - **YAGNI.** No dependency, abstraction or test that isn't paying for itself today.
 
 ## Commands

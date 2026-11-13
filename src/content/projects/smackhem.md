@@ -13,7 +13,7 @@ A game engine inspired by Drakkhen's exploration and CrossCode's use of web tech
 
 ## What's in it
 
-- **Custom rendering on WebGL 2.0.** There's no engine underneath, and the Vec2/Vec3/Mat4 math is hand-written.
+- **Custom rendering on WebGL 2.0.** There's no engine underneath, and the Vec2/Vec3/Mat4 math doesn't come from a library.
 - **Chunked world streaming.** Maps are split into offset-named JSON chunks that load as you explore.
 - **Platform-agnostic core.** Camera, collision, game loop and world systems sit behind service interfaces (renderer, input, clock, asset loader), so the web build is just one platform. Desktop and consoles are the long-term targets.
 - **Audio, battles and scenes.** There's a day/night ambient bed, music, and a battle system, all specified in design docs before any code was written.
@@ -21,7 +21,5 @@ A game engine inspired by Drakkhen's exploration and CrossCode's use of web tech
 ## How I work on it
 
 The design document drives the project: every system gets a written spec before it gets code, and the spec stays up to date as things change. Tasks are tracked as GitHub issues.
-
-I've used several AI tools along the way. They're useful for spiking ideas and weighing trade-offs, but I hold the quality bar myself: I need to understand every line and the reason for it.
 
 After more than five years of studying 3D, I can finally say I've put a pin in quaternions.

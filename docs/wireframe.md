@@ -1,6 +1,6 @@
 # Wireframe
 
-The rotating icosahedron in the home page hero. It's drawn with WebGL 2 and about 60 lines of hand-written matrix and quaternion math, no 3D library.
+The rotating icosahedron in the home page hero. It's drawn with WebGL 2 and about 60 lines of matrix and quaternion math, no 3D library.
 
 ## Table of Contents
 

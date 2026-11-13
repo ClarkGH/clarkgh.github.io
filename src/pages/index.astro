@@ -56,6 +56,10 @@ const statusLabel = {
         And <a href="/projects/shotlify/">Shotlify</a>, which pulls still frames out of video in the browser,
         with <a href="/projects/images-to-slideshow/">a small Node service</a> that turns them into a slideshow.
       </p>
+      <p class="proof">
+        I build with AI tools, but don't over-rely on them. A tool should never become a crutch. I write the specs and the interfaces, make the calls, and review every
+        change. If I can't explain it, it doesn't ship.
+      </p>
     </div>
     <Wireframe />
   </section>
@@ -209,6 +213,9 @@ const statusLabel = {
     max-width: var(--measure);
     margin: 0;
     color: var(--muted);
+  }
+  .proof + .proof {
+    margin-top: 1.1rem;
   }
   .proof a {
     color: var(--text);
