@@ -132,11 +132,11 @@ The JSON-LD in the home page `<head>` is written with `set:html`, which doesn't 
 
 ## Everything else we checked
 
-- **HTTPS:** turn on **Settings → Pages → Enforce HTTPS** in the repo. As of 2026-11-11, `http://clarkgh.github.io/` answers over plain HTTP instead of redirecting, so that box is off.
+- **HTTPS:** enforced in **Settings → Pages**. Checked 2026-11-16: `http://clarkhinchcliff.com/` and `http://www.clarkhinchcliff.com/` both answer with a 301 to `https://clarkhinchcliff.com/`.
 - **No third parties at runtime:** no CDNs, analytics, embeds or remote fonts, so there's nothing to pin with Subresource Integrity.
 - **No user input:** no forms, query parameters or cookies are read. The only stored value is the theme, and the theme script only accepts `'light'` or `'dark'`.
 - **Content is trusted:** Markdown can contain raw HTML, which is fine because only Clark writes it. Don't render Markdown from anyone else without sanitizing it.
-- **Dependencies:** `pnpm audit` was clean on 2026-11-11. The lockfile is committed, and CI installs from it.
+- **Dependencies:** `pnpm audit` was clean on 2026-11-11. The lockfile is committed, and CI installs from it. [Dependabot](../.github/dependabot.yml) opens weekly PRs: one for Astro and `@astrojs/*`, one for the other dev tools, and one for the deploy workflow's actions. Major versions of `@types/node` and `typescript` are skipped on purpose (see the comments in the file).
 - **CI permissions:** the deploy workflow asks for the minimum (`contents: read`, `pages: write`, `id-token: write`).
 
 ## Rules it follows

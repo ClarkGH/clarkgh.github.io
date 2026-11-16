@@ -1,0 +1,32 @@
+# Weekly update PRs for npm packages and the deploy workflow's actions.
+# See docs/security.md#everything-else-we-checked
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # A package goes in the first group it matches, so @astrojs/check lands with Astro, not dev tools
+    groups:
+      astro:
+        patterns:
+          - astro
+          - "@astrojs/*"
+      dev-tools:
+        dependency-type: development
+    ignore:
+      # Tracks the Node version CI runs (24), so it moves when CI does
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # TypeScript 7 waits until @astrojs/check supports it
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"

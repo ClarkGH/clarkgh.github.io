@@ -66,6 +66,7 @@ src/
 | `scripts/checkCsp.mjs` | Post-build gate: runs `src/lib/cspAudit.ts` over every page in `dist/` |
 | `public/` | Copied as-is: `favicon.svg`, `og.png` (social card), `robots.txt`, `CNAME` (custom domain) |
 | `.github/workflows/deploy.yml` | Builds and deploys to GitHub Pages on push to `main` |
+| `.github/dependabot.yml` | Weekly update PRs for npm packages and GitHub Actions |
 | `docs/` | These docs |
 
 ## Testing
