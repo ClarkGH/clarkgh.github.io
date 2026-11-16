@@ -6,14 +6,17 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    # A package goes in the first group it matches, so @astrojs/check lands with Astro, not dev tools
+    # A package goes in the first group it matches, so @astrojs/check lands with Astro, not dev tools.
+    # Groups hold minor and patch bumps only; a major gets its own PR, so it can't hold the others back.
     groups:
       astro:
         patterns:
           - astro
           - "@astrojs/*"
+        update-types: [minor, patch]
       dev-tools:
         dependency-type: development
+        update-types: [minor, patch]
     ignore:
       # Tracks the Node version CI runs (24), so it moves when CI does
       - dependency-name: "@types/node"
@@ -30,3 +33,4 @@ updates:
       actions:
         patterns:
           - "*"
+        update-types: [minor, patch]

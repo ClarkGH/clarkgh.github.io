@@ -136,7 +136,7 @@ The JSON-LD in the home page `<head>` is written with `set:html`, which doesn't 
 - **No third parties at runtime:** no CDNs, analytics, embeds or remote fonts, so there's nothing to pin with Subresource Integrity.
 - **No user input:** no forms, query parameters or cookies are read. The only stored value is the theme, and the theme script only accepts `'light'` or `'dark'`.
 - **Content is trusted:** Markdown can contain raw HTML, which is fine because only Clark writes it. Don't render Markdown from anyone else without sanitizing it.
-- **Dependencies:** `pnpm audit` was clean on 2026-11-11. The lockfile is committed, and CI installs from it. [Dependabot](../.github/dependabot.yml) opens weekly PRs: one for Astro and `@astrojs/*`, one for the other dev tools, and one for the deploy workflow's actions. Major versions of `@types/node` and `typescript` are skipped on purpose (see the comments in the file).
+- **Dependencies:** `pnpm audit` was clean on 2026-11-11. The lockfile is committed, and CI installs from it. [Dependabot](../.github/dependabot.yml) opens weekly PRs: one for Astro and `@astrojs/*`, one for the other dev tools, and one for the deploy workflow's actions. A major version comes as its own PR. Dependabot alerts and security updates are on in the repo settings. Major versions of `@types/node` and `typescript` are skipped on purpose (see the comments in the file).
 - **CI permissions:** the deploy workflow asks for the minimum (`contents: read`, `pages: write`, `id-token: write`).
 
 ## Rules it follows
