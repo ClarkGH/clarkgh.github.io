@@ -4,14 +4,14 @@
 
 import {
   type Vec3,
-  NUDGE,
-  capSpin,
+  allowsMomentum,
   classifyRelease,
   easeToward,
   isSettled,
   len3,
-  nudge,
+  spinAfterRelease,
   tapDirection,
+  turnToward,
 } from './motion';
 
 type Quat = [number, number, number, number];
@@ -277,9 +277,18 @@ export function mountWireframe(figure: HTMLElement) {
   // ---- Input: drag rotates in screen space; release keeps the spin, which eases back to idle ----
   // WCAG 2.5.7: anything done by dragging also needs a single-pointer way. A tap (no drag) nudges the
   // solid toward the side that was tapped, the same nudge the arrow keys give.
+  // Under reduced motion with the spin off, nothing moves after the finger lifts (allowsMomentum).
   // Only one pointer drives it at a time: a second finger is ignored until the first lifts.
   let activeId: number | null = null;
   let down = { x: 0, y: 0, t: 0, moved: 0 };
+
+  // A tap or arrow key: a nudge to the spin, or an instant step when there's no momentum.
+  const turn = (dir: Vec3) => {
+    const t = turnToward(omega, dir, allowsMomentum(reduce, spinning));
+    omega = t.omega;
+    if (t.step) q = qnorm(qmul(qaxis(dir, t.step), q));
+    kick();
+  };
 
   canvas.addEventListener('pointerdown', (ev) => {
     if (activeId !== null) return;
@@ -320,13 +329,11 @@ export function mountWireframe(figure: HTMLElement) {
       // Turn toward the tapped side, measured from the center.
       const r = canvas.getBoundingClientRect();
       const dir = tapDirection(down.x - (r.left + r.width / 2), down.y - (r.top + r.height / 2), r.width);
-      if (dir) omega = nudge(omega, dir);
-    } else if (kind === 'drop') {
-      omega = [0, 0, 0];
+      if (dir) turn(dir);
     } else {
-      // 'fling', or 'cancel' (the browser took the swipe to scroll): keep the spin, capped. A scroll
-      // usually cancels before any move, so this is just the spin the solid already had.
-      omega = capSpin(omega);
+      // A 'fling' or 'cancel' (the browser took the swipe to scroll) keeps the spin, capped; a scroll
+      // usually cancels before any move, so that's the spin the solid already had. A 'drop' stops it.
+      omega = spinAfterRelease(kind, omega, allowsMomentum(reduce, spinning));
     }
     kick();
   };
@@ -357,8 +364,7 @@ export function mountWireframe(figure: HTMLElement) {
     const dir = KEYS[ev.key];
     if (!dir) return;
     ev.preventDefault();
-    omega = nudge(omega, dir, NUDGE);
-    kick();
+    turn(dir);
   });
 
   document.addEventListener('themechange', () => {

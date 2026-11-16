@@ -4,15 +4,20 @@ import {
   DEAD_ZONE,
   HOLD_MS,
   MAX_SPIN,
+  NUDGE,
+  STEP,
   TAP_MAX_MOVE,
   TAP_MAX_MS,
+  allowsMomentum,
   capSpin,
   classifyRelease,
   easeToward,
   isSettled,
   len3,
   nudge,
+  spinAfterRelease,
   tapDirection,
+  turnToward,
 } from './motion';
 
 const SPIN: Vec3 = [0.1, 0.28, 0.04];
@@ -117,5 +122,51 @@ describe('capSpin', () => {
 describe('nudge', () => {
   it('adds the nudge on top of the current spin', () => {
     expect(nudge([0.1, 0, 0], [0, 1, 0], 2)).toEqual([0.1, 2, 0]);
+  });
+});
+
+describe('allowsMomentum', () => {
+  it('allows motion after a release unless reduced motion is on', () => {
+    expect(allowsMomentum(false, false)).toBe(true);
+    expect(allowsMomentum(false, true)).toBe(true);
+  });
+
+  it('allows none with reduced motion on and the spin off', () => {
+    expect(allowsMomentum(true, false)).toBe(false);
+  });
+
+  it('allows it again once the visitor starts the spin themselves', () => {
+    expect(allowsMomentum(true, true)).toBe(true);
+  });
+});
+
+describe('spinAfterRelease', () => {
+  const flung: Vec3 = [0, 30, 40];
+
+  it('keeps a fling or a cancel, capped, when momentum is allowed', () => {
+    expect(len3(spinAfterRelease('fling', flung, true))).toBeCloseTo(MAX_SPIN);
+    expect(spinAfterRelease('cancel', [0, 1, 0], true)).toEqual([0, 1, 0]);
+  });
+
+  it('stops dead on a fling or a cancel without momentum (the reduced-motion swipe)', () => {
+    expect(spinAfterRelease('fling', flung, false)).toEqual(STILL);
+    expect(spinAfterRelease('cancel', flung, false)).toEqual(STILL);
+  });
+
+  it('stops dead on a drop either way', () => {
+    expect(spinAfterRelease('drop', flung, true)).toEqual(STILL);
+    expect(spinAfterRelease('drop', flung, false)).toEqual(STILL);
+  });
+});
+
+describe('turnToward', () => {
+  const right: Vec3 = [0, 1, 0];
+
+  it('nudges the spin and steps nothing when momentum is allowed', () => {
+    expect(turnToward(STILL, right, true)).toEqual({ omega: [0, NUDGE, 0], step: 0 });
+  });
+
+  it('turns one instant step and leaves the spin alone without momentum', () => {
+    expect(turnToward(STILL, right, false)).toEqual({ omega: STILL, step: STEP });
   });
 });

@@ -66,3 +66,28 @@ export function capSpin(omega: Vec3, max = MAX_SPIN): Vec3 {
 export function nudge(omega: Vec3, dir: Vec3, amount = NUDGE): Vec3 {
   return [omega[0] + dir[0] * amount, omega[1] + dir[1] * amount, omega[2] + dir[2] * amount];
 }
+
+// ---- Reduced motion (WCAG 2.3.3, see docs/wireframe.md#input) ----
+
+/** How far a tap or arrow key turns the solid at once when there's no momentum, in radians. */
+export const STEP = Math.PI / 8;
+
+/**
+ * Whether the solid may keep moving after the finger lifts. Not with reduced motion on, unless the
+ * visitor started the spin themselves. A drag still turns it under the finger either way.
+ */
+export const allowsMomentum = (reduceMotion: boolean, spinning: boolean): boolean => !reduceMotion || spinning;
+
+/** The spin a fling, drop or cancel leaves behind. Taps go through `turnToward`. */
+export function spinAfterRelease(kind: Exclude<Release, 'tap'>, omega: Vec3, momentum: boolean): Vec3 {
+  if (kind === 'drop' || !momentum) return [0, 0, 0];
+  return capSpin(omega);
+}
+
+/**
+ * A tap or arrow key toward `dir`: a nudge that eases out, or without momentum an instant turn of
+ * `step` radians about `dir` and no spin added.
+ */
+export function turnToward(omega: Vec3, dir: Vec3, momentum: boolean): { omega: Vec3; step: number } {
+  return momentum ? { omega: nudge(omega, dir), step: 0 } : { omega, step: STEP };
+}

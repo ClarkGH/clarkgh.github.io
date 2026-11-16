@@ -28,7 +28,7 @@ The rotating icosahedron in the home page hero. It's drawn with WebGL 2 and abou
 | --- | --- |
 | [Wireframe.astro](../src/components/Wireframe.astro) | The figure: canvas, caption, the Stop/Start spinning button, and their styles |
 | [wireframe.ts](../src/scripts/wireframe.ts) | `mountWireframe`: WebGL 2 setup, the math, the render loop, input |
-| [motion.ts](../src/scripts/motion.ts) | The motion rules (`easeToward`, `isSettled`) and input rules (`classifyRelease`, `tapDirection`, `capSpin`, `nudge`, and their thresholds), free of WebGL and the DOM so they can be tested |
+| [motion.ts](../src/scripts/motion.ts) | The motion rules (`easeToward`, `isSettled`), input rules (`classifyRelease`, `tapDirection`, `capSpin`, `nudge`, and their thresholds) and reduced-motion rules (`allowsMomentum`, `spinAfterRelease`, `turnToward`, `STEP`), free of WebGL and the DOM so they can be tested |
 | [motion.spec.ts](../src/scripts/motion.spec.ts) | Specs for those rules, including each threshold's edges |
 
 **State lives in two numbers.** The solid's orientation is a quaternion `q`, and its spin is an angular velocity `omega` (radians per second around each axis). Input changes `omega` (or `q` directly while dragging), and each frame turns `omega` into a small rotation applied to `q`.
@@ -150,6 +150,14 @@ On first load the solid grows from 72% to full size and fades in over 1.1 s, wit
 
 **A cancel is not a tap.** When the browser takes a touch to scroll the page, it sends `pointercancel`. `classifyRelease` returns `'cancel'` for that, never `'tap'`, so a quick swipe past the hero doesn't nudge the solid. The spin keeps going (capped) and eases back to idle.
 
+**Reduced motion: nothing moves after the finger lifts.** With `prefers-reduced-motion` on and the spin off, `allowsMomentum` is false:
+
+- A drag still turns the solid under the finger, because the visitor is moving it directly.
+- A release, whether fling, drop or cancel, leaves it still (`spinAfterRelease`).
+- A tap or arrow key turns it one instant step of 22.5° (`STEP`) instead of the nudge (`turnToward`). Keyboard users keep a way to turn it, with no animation.
+
+If the visitor starts the spin with the button or Space, they've opted in, and input behaves as in the table above.
+
 ## Theme changes
 
 The edge color is the CSS custom property `--wire`. On `themechange` (dispatched by the toggle in [Base.astro](../src/layouts/Base.astro)), `setColor` reads the new value and the loop is kicked so the next frame draws in it.
@@ -170,7 +178,7 @@ To try the lost-context path, run this in the console: `document.querySelector('
 
 - **Pause, stop, hide (WCAG 2.2.2).** The idle spin starts on its own and lasts more than 5 seconds, so the Stop/Start spinning button and the Space key can stop it.
 - **Dragging movements (WCAG 2.5.7).** Everything a drag does can also be done with a single tap, and with the keyboard.
-- **Reduced motion.** With `prefers-reduced-motion`, the solid starts still, the entrance is skipped, and the button offers to start the spin instead.
+- **Reduced motion (WCAG 2.3.3).** With `prefers-reduced-motion`, the solid starts still, the entrance is skipped, and the button offers to start the spin instead. Input adds no motion after the finger lifts; see [Input](#input).
 - **Named for assistive tech.** The canvas has `role="img"` and a label that explains the controls. The button sits outside the `<figcaption>`, so it isn't read as part of the figure's name.
 - **No layout shift.** The button's space is held from the first paint with `visibility: hidden` (not `display: none`) until the script is ready.
 - **Degrades cleanly.** Without WebGL 2, or when the shaders fail, the canvas and button are hidden and the caption says why. A lost context is recovered. See [When WebGL fails](#when-webgl-fails).
