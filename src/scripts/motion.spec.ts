@@ -157,6 +157,17 @@ describe('spinAfterRelease', () => {
     expect(spinAfterRelease('drop', flung, true)).toEqual(STILL);
     expect(spinAfterRelease('drop', flung, false)).toEqual(STILL);
   });
+
+  // A finger wiggles a few pixels during a tap, and each pointermove sets omega from that motion
+  const wiggle: Vec3 = [0, 0.7, 0];
+
+  it('keeps the spin through a tap when momentum is allowed', () => {
+    expect(spinAfterRelease('tap', wiggle, true)).toEqual(wiggle);
+  });
+
+  it("drops a tap's wiggle without momentum, even a tap in the dead zone", () => {
+    expect(spinAfterRelease('tap', wiggle, false)).toEqual(STILL);
+  });
 });
 
 describe('turnToward', () => {
@@ -166,7 +177,11 @@ describe('turnToward', () => {
     expect(turnToward(STILL, right, true)).toEqual({ omega: [0, NUDGE, 0], step: 0 });
   });
 
-  it('turns one instant step and leaves the spin alone without momentum', () => {
+  it('turns one instant step and adds no spin without momentum', () => {
     expect(turnToward(STILL, right, false)).toEqual({ omega: STILL, step: STEP });
+  });
+
+  it('clears any leftover spin without momentum, so nothing eases out after the step', () => {
+    expect(turnToward([0, 0.7, 0], right, false)).toEqual({ omega: STILL, step: STEP });
   });
 });

@@ -153,7 +153,7 @@ On first load the solid grows from 72% to full size and fades in over 1.1 s, wit
 **Reduced motion: nothing moves after the finger lifts.** With `prefers-reduced-motion` on and the spin off, `allowsMomentum` is false:
 
 - A drag still turns the solid under the finger, because the visitor is moving it directly.
-- A release, whether fling, drop or cancel, leaves it still (`spinAfterRelease`).
+- Any release leaves it still (`spinAfterRelease`). That includes a tap: a finger wiggles a few pixels during one, and the drag code turns that wiggle into spin.
 - A tap or arrow key turns it one instant step of 22.5° (`STEP`) instead of the nudge (`turnToward`). Keyboard users keep a way to turn it, with no animation.
 
 If the visitor starts the spin with the button or Space, they've opted in, and input behaves as in the table above.

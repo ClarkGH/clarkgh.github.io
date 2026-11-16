@@ -325,15 +325,14 @@ export function mountWireframe(figure: HTMLElement) {
       sinceLastMoveMs: now - last.t,
       cancelled: ev.type === 'pointercancel',
     });
+    // A 'fling' or 'cancel' (the browser took the swipe to scroll) keeps the spin, capped; a scroll
+    // usually cancels before any move, so that's the spin the solid already had. A 'drop' stops it.
+    omega = spinAfterRelease(kind, omega, allowsMomentum(reduce, spinning));
     if (kind === 'tap') {
       // Turn toward the tapped side, measured from the center.
       const r = canvas.getBoundingClientRect();
       const dir = tapDirection(down.x - (r.left + r.width / 2), down.y - (r.top + r.height / 2), r.width);
       if (dir) turn(dir);
-    } else {
-      // A 'fling' or 'cancel' (the browser took the swipe to scroll) keeps the spin, capped; a scroll
-      // usually cancels before any move, so that's the spin the solid already had. A 'drop' stops it.
-      omega = spinAfterRelease(kind, omega, allowsMomentum(reduce, spinning));
     }
     kick();
   };

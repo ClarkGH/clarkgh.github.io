@@ -78,16 +78,20 @@ export const STEP = Math.PI / 8;
  */
 export const allowsMomentum = (reduceMotion: boolean, spinning: boolean): boolean => !reduceMotion || spinning;
 
-/** The spin a fling, drop or cancel leaves behind. Taps go through `turnToward`. */
-export function spinAfterRelease(kind: Exclude<Release, 'tap'>, omega: Vec3, momentum: boolean): Vec3 {
+/**
+ * The spin any release leaves behind, taps included: a finger wiggles a few pixels during a tap, and
+ * the drag code turns that into spin. A tap's turn is added after this, by `turnToward`.
+ */
+export function spinAfterRelease(kind: Release, omega: Vec3, momentum: boolean): Vec3 {
   if (kind === 'drop' || !momentum) return [0, 0, 0];
+  if (kind === 'tap') return omega;
   return capSpin(omega);
 }
 
 /**
  * A tap or arrow key toward `dir`: a nudge that eases out, or without momentum an instant turn of
- * `step` radians about `dir` and no spin added.
+ * `step` radians about `dir` with the spin cleared.
  */
 export function turnToward(omega: Vec3, dir: Vec3, momentum: boolean): { omega: Vec3; step: number } {
-  return momentum ? { omega: nudge(omega, dir), step: 0 } : { omega, step: STEP };
+  return momentum ? { omega: nudge(omega, dir), step: 0 } : { omega: [0, 0, 0], step: STEP };
 }
