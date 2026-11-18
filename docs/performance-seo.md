@@ -14,6 +14,7 @@ How the site keeps Lighthouse happy: fast first paint (LCP), nothing jumping aro
 - [Layout shift](#layout-shift)
 - [Metadata](#metadata)
     - [Social cards](#social-cards)
+        - [How the default card is built](#how-the-default-card-is-built)
     - [Structured data](#structured-data)
     - [Sitemap and robots.txt](#sitemap-and-robotstxt)
 - [Deploy](#deploy)
@@ -30,7 +31,8 @@ How the site keeps Lighthouse happy: fast first paint (LCP), nothing jumping aro
 | [Base.astro](../src/layouts/Base.astro) | `<Font>` preload, title, description, canonical, Open Graph, Twitter card, JSON-LD |
 | [index.astro](../src/pages/index.astro), [[id].astro](../src/pages/projects/[id].astro) | Responsive `<Image>`s, per-page descriptions and social cards |
 | [sitemap.xml.ts](../src/pages/sitemap.xml.ts) | The sitemap |
-| `public/robots.txt`, `public/og.png` | Crawl rules, and the default social card |
+| [og.png.ts](../src/pages/og.png.ts), [socialCard.ts](../src/lib/socialCard.ts) | The default social card, built at build time |
+| `public/robots.txt` | Crawl rules |
 | [deploy.yml](../.github/workflows/deploy.yml) | Build and deploy on push to `main` |
 
 ## The big picture
@@ -126,9 +128,31 @@ Every page gets, from [Base.astro](../src/layouts/Base.astro):
 Open Graph and Twitter tags (`og:title`, `og:description`, `og:url`, `og:type`, `og:image`, `og:image:alt`, `twitter:card = summary_large_image`) control the preview when a link is shared.
 
 - **Project pages** use their screenshot, converted to JPEG by `getImage` in [[id].astro](../src/pages/projects/[id].astro), with the project's `imageAlt`.
-- **Everything else** uses `public/og.png`: 1200×630, the name and tagline in Piazzolla next to the icosahedron, drawn with the same construction as the hero. To change the copy, regenerate the image.
+- **Everything else** uses `/og.png`: 1200×630, the name and tagline in Piazzolla next to the icosahedron.
 
 `og:type` is `profile` on the home page and `article` on project pages.
+
+#### How the default card is built
+
+The card is made on every build by [og.png.ts](../src/pages/og.png.ts), a static endpoint, so it's never a file someone has to remember to regenerate. What's on it lives in [socialCard.ts](../src/lib/socialCard.ts):
+
+- **The tagline is one constant.** It feeds both the card and `og:image:alt` in Base.astro, so the image and its description can't disagree. To change the copy, edit `TAGLINE` and build.
+- **The solid is the hero's solid.** It uses `icosahedron()`, the quaternion math, the camera and the depth fade (`DEPTH`, `nearness`, `depthAlpha`) from [geometry.ts](../src/scripts/geometry.ts), the same module the [wireframe](wireframe.md) draws from. Back edges and dots fade to 20% on both.
+- **One difference from the hero, on purpose: dot size.** The hero's shader shrinks back dots to 55%, but the card keeps every dot the same size, as the original card did. Shrinking them moved the render further from the original and made the front vertices look flat.
+- **Drawn back to front.** The card's colors are solid (pre-blended over the background), so whatever is drawn last covers whatever is under it. Edges and dots are sorted together by depth, so nearer marks always sit on top. The hero doesn't need this, because its additive blending makes order irrelevant.
+- **Colors are the dark theme's tokens.** A spec checks them against `global.css`, so a palette change can't leave the card behind.
+- **The text is checked, not trusted.** If Pango can't load Piazzolla, it quietly falls back to another font. A spec renders each line twice, once as written and once with a font name that can't exist, and fails if the widths match. It also checks that the rendered text ends before the solid begins.
+
+**Why the text and the solid are drawn differently.** sharp has two ways to draw text, and only one handles a variable font properly:
+
+| Renderer | Weight 330, optical size 30 | Used for |
+| --- | --- | --- |
+| SVG `<text>` (librsvg) | Snaps to the nearest named weight (300) and ignores `font-variation-settings`, so the headline comes out heavier | The background and the solid, which have no text |
+| `text` input (Pango) | Takes exact axis values: `font_desc="Piazzolla 84 @wght=330,opsz=30"`. The size goes before the axes. | The two lines of text, composited onto the SVG |
+
+**Why the fonts are TTFs in `src/assets/fonts/`.** sharp's bundled FreeType can't read woff2, so the site's own font files are no use to it. The TTFs are Piazzolla's variable fonts from Google Fonts, kept with their `OFL.txt` license. They're read at build time and never shipped, because nothing imports them.
+
+**Checking a change:** run `pnpm build` and open `dist/og.png`. The sizes and positions in `TEXT` were fit pixel by pixel to the original hand-made card (mean difference 1.5 out of 255 per channel), so a change that isn't meant to move anything shouldn't.
 
 ### Structured data
 
@@ -142,7 +166,7 @@ The home page carries JSON-LD (schema.org) describing a `Person` (name, job titl
 
 ## Deploy
 
-[deploy.yml](../.github/workflows/deploy.yml) runs on push to `main` (or by hand). `withastro/action` installs with pnpm and runs `pnpm build`, which runs the specs, `astro check`, the build and the CSP check, in that order. Any failure stops the deploy. `actions/deploy-pages` publishes `dist/`.
+[deploy.yml](../.github/workflows/deploy.yml) runs on push to `main` (or by hand). `withastro/action` installs with pnpm, at the version pinned by `packageManager` in `package.json` (the workflow deliberately doesn't set one too: if the two ever differed, the run would fail), and runs `pnpm build`, which runs the specs, `astro check`, the build and the CSP check, in that order. Any failure stops the deploy. `actions/deploy-pages` publishes `dist/`.
 
 The workflow's permissions are the minimum Pages needs: `contents: read`, `pages: write`, `id-token: write`.
 

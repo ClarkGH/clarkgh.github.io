@@ -27,7 +27,9 @@ The rotating icosahedron in the home page hero. It's drawn with WebGL 2 and abou
 | File | Job |
 | --- | --- |
 | [Wireframe.astro](../src/components/Wireframe.astro) | The figure: canvas, caption, the Stop/Start spinning button, and their styles |
-| [wireframe.ts](../src/scripts/wireframe.ts) | `mountWireframe`: WebGL 2 setup, the math, the render loop, input |
+| [wireframe.ts](../src/scripts/wireframe.ts) | `mountWireframe`: WebGL 2 setup, matrices, the render loop, input |
+| [geometry.ts](../src/scripts/geometry.ts) | `Vec3`, `icosahedron()`, the quaternion helpers (`qmul`, `qnorm`, `qaxis`, `qmat`, `rotate`), `CAMERA` (field of view and distance) and the depth fade (`DEPTH`, `nearness`, `depthAlpha`), free of WebGL and the DOM. The shader reads `DEPTH.floor` from here. The [social card](performance-seo.md#how-the-default-card-is-built) draws from the same module, so the shape, camera and fade can't drift apart. Dot size is the one deliberate difference |
+| [geometry.spec.ts](../src/scripts/geometry.spec.ts) | 12 vertices on the unit sphere, 30 equal edges, five per vertex; rotation direction and quaternion order |
 | [motion.ts](../src/scripts/motion.ts) | The motion rules (`easeToward`, `isSettled`), input rules (`classifyRelease`, `tapDirection`, `capSpin`, `nudge`, and their thresholds) and reduced-motion rules (`allowsMomentum`, `spinAfterRelease`, `turnToward`, `STEP`), free of WebGL and the DOM so they can be tested |
 | [motion.spec.ts](../src/scripts/motion.spec.ts) | Specs for those rules, including each threshold's edges |
 

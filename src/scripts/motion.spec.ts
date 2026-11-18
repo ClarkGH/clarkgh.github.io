@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import type { Vec3 } from './geometry';
 import {
-  type Vec3,
   DEAD_ZONE,
   HOLD_MS,
   MAX_SPIN,

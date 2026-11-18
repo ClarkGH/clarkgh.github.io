@@ -1,6 +1,6 @@
 // The wireframe's motion rules, kept free of WebGL and the DOM so they can be unit-tested.
 
-export type Vec3 = [number, number, number];
+import type { Vec3 } from './geometry';
 
 export const len3 = (v: Vec3) => Math.hypot(v[0], v[1], v[2]);
 

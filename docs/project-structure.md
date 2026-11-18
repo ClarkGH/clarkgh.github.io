@@ -20,6 +20,10 @@
 ```
 src/
 ├── assets/
+│   ├── fonts/                     # Piazzolla TTFs for the social card; build-only, never shipped
+│   │   ├── OFL.txt                # the fonts' license (SIL Open Font License), kept with them
+│   │   ├── Piazzolla-Italic-Variable.ttf
+│   │   └── Piazzolla-Variable.ttf
 │   └── projects/                  # screenshots; Astro resizes them and serves WebP
 │       ├── images-to-slideshow.png
 │       ├── shotlify.png
@@ -42,16 +46,21 @@ src/
 │   ├── cspAudit.spec.ts
 │   ├── cspAudit.ts                # the CSP check's rules, run by scripts/checkCsp.mjs
 │   ├── externalLinks.ts           # rel values for links that leave the site
+│   ├── socialCard.spec.ts
+│   ├── socialCard.ts              # the social card as data: tagline, alt text, colors, the solid as SVG
 │   └── themeInit.ts               # the pre-paint theme script, shared with the CSP config
 ├── pages/
 │   ├── index.astro                # home: hero + project index
+│   ├── og.png.ts                  # the social card, rendered with sharp at build time
 │   ├── projects/
 │   │   └── [id].astro             # one page per project
 │   └── sitemap.xml.ts             # hand-rolled sitemap
 ├── scripts/
+│   ├── geometry.spec.ts
+│   ├── geometry.ts                # the icosahedron, quaternions and camera, shared by the hero and the social card
 │   ├── motion.spec.ts
 │   ├── motion.ts                  # the wireframe's motion rules, free of WebGL and the DOM
-│   └── wireframe.ts               # WebGL 2 setup, math, render loop, input
+│   └── wireframe.ts               # WebGL 2 setup, render loop, input
 ├── styles/
 │   └── global.css                 # color tokens, base type, shared classes
 ├── content.config.ts              # the projects collection schema
@@ -65,7 +74,7 @@ src/
 | --- | --- |
 | `astro.config.mjs` | Site URL, self-hosted font, inlined CSS, CSP directives |
 | `scripts/checkCsp.mjs` | Post-build gate: runs `src/lib/cspAudit.ts` over every page in `dist/` |
-| `public/` | Copied as-is: `favicon.svg`, `og.png` (social card), `robots.txt`, `CNAME` (custom domain) |
+| `public/` | Copied as-is: `favicon.svg`, `robots.txt`, `CNAME` (custom domain). The social card is built, see [performance-seo.md](performance-seo.md#how-the-default-card-is-built) |
 | `.github/workflows/deploy.yml` | Builds and deploys to GitHub Pages on push to `main` |
 | `.github/dependabot.yml` | Weekly update PRs for npm packages and GitHub Actions |
 | `docs/` | These docs |

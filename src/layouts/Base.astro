@@ -3,6 +3,7 @@ import '../styles/global.css';
 import { Font } from 'astro:assets';
 import LearnMenu from '../components/LearnMenu.astro';
 import { PROFILE_REL } from '../lib/externalLinks';
+import { CARD_ALT } from '../lib/socialCard';
 import { THEME_INIT } from '../lib/themeInit';
 
 const GITHUB = 'https://github.com/ClarkGH';
@@ -21,7 +22,7 @@ const {
   title,
   description = 'Clark Hinchcliff, a frontend engineer, and the projects he’s been building and learning from.',
   type = 'profile',
-  image = { src: '/og.png', alt: 'Clark Hinchcliff, “Frontend engineer. Learning by building.”, beside a rose wireframe icosahedron.' },
+  image = { src: '/og.png', alt: CARD_ALT },
 } = Astro.props;
 const isHome = Astro.url.pathname === '/';
 const fullTitle = isHome ? 'Clark Hinchcliff' : `${title} – Clark Hinchcliff`;

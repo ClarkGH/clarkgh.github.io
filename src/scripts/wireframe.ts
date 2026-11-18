@@ -3,7 +3,6 @@
 // Redraws in the new accent color on 'themechange'
 
 import {
-  type Vec3,
   allowsMomentum,
   classifyRelease,
   easeToward,
@@ -13,9 +12,7 @@ import {
   tapDirection,
   turnToward,
 } from './motion';
-
-type Quat = [number, number, number, number];
-type Mat4 = Float32Array; // column-major
+import { CAMERA, DEPTH, type Mat4, type Vec3, icosahedron, qaxis, qmat, qmul, qnorm } from './geometry';
 
 /** o = a × b. `o` must not be `a` or `b`. Writes into `o` so the render loop allocates nothing. */
 const mul = (a: Mat4, b: Mat4, o: Mat4): Mat4 => {
@@ -34,53 +31,6 @@ const perspective = (fovy: number, aspect: number, near: number, far: number): M
   return new Float32Array([f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) * nf, -1, 0, 0, 2 * far * near * nf, 0]);
 };
 
-const qmul = ([ax, ay, az, aw]: Quat, [bx, by, bz, bw]: Quat): Quat => [
-  aw * bx + ax * bw + ay * bz - az * by,
-  aw * by - ax * bz + ay * bw + az * bx,
-  aw * bz + ax * by - ay * bx + az * bw,
-  aw * bw - ax * bx - ay * by - az * bz,
-];
-
-const qnorm = (q: Quat): Quat => {
-  const l = Math.hypot(...q);
-  return [q[0] / l, q[1] / l, q[2] / l, q[3] / l];
-};
-
-const qaxis = ([x, y, z]: Vec3, angle: number): Quat => {
-  const l = Math.hypot(x, y, z);
-  if (l < 1e-9 || angle === 0) return [0, 0, 0, 1];
-  const s = Math.sin(angle / 2) / l;
-  return [x * s, y * s, z * s, Math.cos(angle / 2)];
-};
-
-/** Writes the rotation matrix for `q` into `o`. */
-const qmat = ([x, y, z, w]: Quat, o: Mat4): Mat4 => {
-  o.set([
-    1 - 2 * (y * y + z * z), 2 * (x * y + z * w), 2 * (x * z - y * w), 0,
-    2 * (x * y - z * w), 1 - 2 * (x * x + z * z), 2 * (y * z + x * w), 0,
-    2 * (x * z + y * w), 2 * (y * z - x * w), 1 - 2 * (x * x + y * y), 0,
-    0, 0, 0, 1,
-  ]);
-  return o;
-};
-
-// ---- Geometry: icosahedron from three golden rectangles ----
-function icosahedron() {
-  const PHI = (1 + Math.sqrt(5)) / 2;
-  const raw: Vec3[] = [];
-  for (const a of [-1, 1])
-    for (const b of [-PHI, PHI]) raw.push([0, a, b], [a, b, 0], [b, 0, a]);
-  // Neighboring vertices are exactly 2 apart.
-  const edges: number[] = [];
-  for (let i = 0; i < raw.length; i++)
-    for (let j = i + 1; j < raw.length; j++) {
-      const d: Vec3 = [raw[i][0] - raw[j][0], raw[i][1] - raw[j][1], raw[i][2] - raw[j][2]];
-      if (Math.abs(d[0] * d[0] + d[1] * d[1] + d[2] * d[2] - 4) < 1e-6) edges.push(i, j);
-    }
-  const r = Math.hypot(1, PHI);
-  return { verts: new Float32Array(raw.flat().map((v) => v / r)), edges: new Uint16Array(edges), count: raw.length };
-}
-
 // ---- Shaders ----
 const VS = `#version 300 es
 in vec3 a_pos;
@@ -88,7 +38,7 @@ uniform mat4 u_mvp, u_rot;
 uniform float u_size;
 out float v_near;
 void main() {
-  v_near = (u_rot * vec4(a_pos, 1.0)).z * 0.5 + 0.5;
+  v_near = (u_rot * vec4(a_pos, 1.0)).z * 0.5 + 0.5; // nearness() in geometry.ts
   gl_Position = u_mvp * vec4(a_pos, 1.0);
   gl_PointSize = u_size * mix(0.55, 1.0, v_near);
 }`;
@@ -101,7 +51,7 @@ uniform float u_alpha, u_point;
 out vec4 o;
 void main() {
   if (u_point > 0.5) { vec2 c = gl_PointCoord - 0.5; if (dot(c, c) > 0.25) discard; }
-  float a = mix(0.2, 1.0, v_near) * u_alpha; // back edges fade: depth without a depth buffer
+  float a = mix(${DEPTH.floor.toFixed(2)}, 1.0, v_near) * u_alpha; // back edges fade: depth without a depth buffer
   o = vec4(u_color * a, a);
 }`;
 
@@ -195,7 +145,7 @@ export function mountWireframe(figure: HTMLElement) {
   const rot = new Float32Array(16);
   const model = new Float32Array(16);
   const mvp = new Float32Array(16);
-  const project = () => perspective(0.68, canvas.width / canvas.height, 0.1, 10);
+  const project = () => perspective(CAMERA.fovy, canvas.width / canvas.height, 0.1, 10);
   let proj = project();
 
   const draw = (t: number) => {
@@ -220,7 +170,7 @@ export function mountWireframe(figure: HTMLElement) {
     qmat(q, rot);
     const s = 0.72 + 0.28 * ease;
     for (let i = 0; i < 12; i++) model[i] = rot[i] * s;
-    model.set([0, 0, -3.4, 1], 12);
+    model.set([0, 0, -CAMERA.distance, 1], 12);
     mul(proj, model, mvp);
 
     gl.clearColor(0, 0, 0, 0);
