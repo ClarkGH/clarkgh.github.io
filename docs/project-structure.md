@@ -55,7 +55,8 @@ src/
 ├── styles/
 │   └── global.css                 # color tokens, base type, shared classes
 ├── content.config.ts              # the projects collection schema
-└── projectStructure.spec.ts       # keeps this tree honest
+├── projectStructure.spec.ts       # keeps this tree honest
+└── workflowPins.spec.ts           # every Action in .github/workflows/ is pinned to a commit SHA
 ```
 
 ## Outside src
@@ -76,6 +77,7 @@ src/
 - **Test the logic, not the GPU.** Rules that can break silently live in modules with no WebGL or DOM (`motion.ts`), and those get specs. The WebGL calls and event wiring are checked by hand in a browser.
 - **The CSP check runs after the build** (`scripts/checkCsp.mjs`), because it reads the built `dist/`. Its rules live in `src/lib/cspAudit.ts` and have specs, so a regex that stops matching can't quietly pass every page. See [security.md](security.md#the-csp-check).
 - **This doc is a gate** (`src/projectStructure.spec.ts`): every file in `src/` must appear in the tree above, and every file in the tree must exist. Adding, moving or deleting a file turns `pnpm test` red until the tree matches. It checks names only, so keep the descriptions honest by hand.
+- **Workflow actions must be pinned** (`src/workflowPins.spec.ts`): every `uses:` in `.github/workflows/` needs a full commit SHA and an exact `# vX.Y.Z` comment, or `pnpm test` goes red. It tests its own pattern against good and bad lines, and fails if it finds no actions at all, so a broken pattern can't pass silently. See [security.md](security.md#everything-else-we-checked).
 
 ## Navigation
 

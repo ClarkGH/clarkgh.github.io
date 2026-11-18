@@ -138,6 +138,7 @@ The JSON-LD in the home page `<head>` is written with `set:html`, which doesn't 
 - **Content is trusted:** Markdown can contain raw HTML, which is fine because only Clark writes it. Don't render Markdown from anyone else without sanitizing it.
 - **Dependencies:** `pnpm audit` was clean on 2026-11-11. The lockfile is committed, and CI installs from it. [Dependabot](../.github/dependabot.yml) opens weekly PRs: one for Astro and `@astrojs/*`, one for the other dev tools, and one for the deploy workflow's actions. A major version comes as its own PR. Dependabot alerts and security updates are on in the repo settings. Major versions of `@types/node` and `typescript` are skipped on purpose (see the comments in the file).
 - **CI permissions:** the deploy workflow asks for the minimum (`contents: read`, `pages: write`, `id-token: write`).
+- **Actions pinned to commit SHAs:** each `uses:` in the [deploy workflow](../.github/workflows/deploy.yml) names a full commit SHA with the version in a comment (`@<sha> # v7.0.1`). A tag can be moved to different code. A SHA can't, so a hijacked action repo can't change what runs with `pages: write`. Dependabot's `github-actions` updates bump the SHA and the comment together. When you add an action, pin it the same way: `git ls-remote --tags https://github.com/<owner>/<repo>.git` lists each tag's commit. [workflowPins.spec.ts](../src/workflowPins.spec.ts) fails the build if an action isn't pinned or its comment isn't an exact version.
 
 ## Rules it follows
 
@@ -149,12 +150,11 @@ The JSON-LD in the home page `<head>` is written with `set:html`, which doesn't 
 
 ## Not built yet
 
-These need either HTTP headers, which GitHub Pages can't send, or a decision:
+These need HTTP headers, which GitHub Pages can't send:
 
 - **Clickjacking protection.** `frame-ancestors` and `X-Frame-Options` only work as headers. The risk is low: there's nothing on the site to trick someone into clicking. Moving to a host with header control (Cloudflare Pages, Netlify) would fix it.
 - **Other headers:** `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`. GitHub Pages sends none of them (checked 2026-11-11).
 - **CSP violation reports.** These need `report-to`, which is header-only.
-- **Pinning GitHub Actions to commit SHAs** instead of version tags, so a hijacked tag can't change what runs in CI. Clark's call: it trades safety for manual updates.
 
 ## Navigation
 
