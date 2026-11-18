@@ -6,6 +6,7 @@ Everything around a page's content: the `<head>`, header, footer, light/dark the
 
 - [Where it lives](#where-it-lives)
 - [Design tokens](#design-tokens)
+    - [Units](#units)
 - [Theme](#theme)
     - [No flash on load](#no-flash-on-load)
 - [Header and footer](#header-and-footer)
@@ -44,6 +45,21 @@ All colors are custom properties on `:root`, defined twice in [global.css](../sr
 Every text pair passes WCAG AA contrast in both themes (body text is about 13.7:1, muted text at least 5.5:1, links at least 5:1).
 
 Type is one family, Piazzolla, a variable serif with optical sizing. It's self-hosted, see [performance-seo.md](performance-seo.md#fonts).
+
+### Units
+
+The CSS uses px, em and rem together on purpose. Each unit has one job:
+
+| Unit | Used for | Why |
+| --- | --- | --- |
+| `rem` | Font sizes, spacing, layout widths (`--measure`, `--max`), media queries | It follows the reader's browser font-size setting. Someone who turned up their default text size, which is common on phones, gets a bigger site, and the layout scales with it. Font sizes in px would ignore that setting. |
+| `em` | Things that belong to their own text: letter-spacing, underline offset, the typewriter caret, the learning menu's chevron, the home `<h1>`'s `max-width` | They stay in proportion when that text's size changes, for example when a `clamp()` headline grows. The `<h1>`'s `7.82em` replaced `13ch` because `ch` is measured from whichever font is showing, which caused layout shift while the fallback font was up (see [performance-seo.md](performance-seo.md#fonts)). |
+| `px` | Borders, outlines, hairlines, small radii, `text-decoration-thickness` | A 1px rule should stay a hairline at any text size. Borders in rem round differently from device to device and get heavy when text is enlarged. |
+| `vw`, `vh`, `svh`, `dvh` | Only inside `clamp()` for fluid sizes, and for full-height sheets | `vw` alone never sets a width, because it includes the scrollbar (see [the learning menu](#the-learning-menu)). The menu sheet uses `dvh`, so it fits the screen with the browser's toolbars showing. |
+
+**Media queries use `rem`, too.** Inside a media query, `rem` means the browser's default font size, not the page's. So a breakpoint like `48rem` moves when a reader enlarges their text, and they get the narrow layout sooner instead of a squeezed wide one.
+
+**Mobile first.** The base styles are the phone layout. Wider layouts are added with `min-width` queries. The breakpoints (30, 40, 48 and 56rem) are where each piece of content stops fitting, not device widths, so each one sits next to the component it changes.
 
 ## Theme
 
@@ -113,6 +129,8 @@ The caret blinks three times, about 3 seconds, and then is removed. WCAG 2.2.2 r
 ## Rules it follows
 
 - **Tokens only.** No raw colors outside `global.css`.
+- **Each unit has one job.** rem for size and space, em for things tied to their own text, px for hairlines. See [Units](#units).
+- **Mobile first.** Write the phone layout first, then add `min-width` queries in rem.
 - **Serif only.** Piazzolla everywhere, no monospace, no pill-shaped tags.
 - **No inline `style=""` attributes.** The CSP would block them, and the [CSP check](security.md#the-csp-check) fails the build if one appears.
 - **External links get `rel`** from [externalLinks.ts](../src/lib/externalLinks.ts). See [security.md](security.md#external-links).
@@ -120,6 +138,9 @@ The caret blinks three times, about 3 seconds, and then is removed. WCAG 2.2.2 r
 ## Not built yet
 
 - **A custom 404 page.** GitHub Pages shows its generic one today.
+- **The header's two queries are still `max-width`.** They hide the profile links and Projects on narrow screens. They should be flipped to `min-width` so the header follows the mobile-first rule.
+- **A type and spacing scale.** Font sizes and spacing are still one-off rem values chosen per component. They should become a small set of tokens in `global.css` that components share.
+- **Hover styles on touch screens.** `:hover` stays applied after a tap until you tap elsewhere. Hover-only changes should go inside `@media (hover: hover)`.
 - **Remember the learning menu sections' open/closed state** between visits.
 
 ## Navigation
