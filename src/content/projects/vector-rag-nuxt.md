@@ -5,7 +5,7 @@ repo: https://github.com/ClarkGH/VectorRAGNuxt
 stack: [Nuxt, Node, MongoDB Vector Search, OpenAI API]
 status: experiment
 image: ../../assets/projects/vector-rag-nuxt.png
-imageAlt: "The search page at phone width: a search for \"small honda hatchback\", an AI summary saying all 5 results fit, and the top result, the Honda Fit at 67% match, with a blue edge and an AI pick note explaining why it fits."
+imageAlt: "The search page at phone width: a search for \"small honda hatchback\", an AI summary saying all 5 results fit, and the top result, the Honda Fit marked \"Strong match\", with a blue edge and an AI pick note explaining why it fits."
 order: 3
 ---
 
