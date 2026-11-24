@@ -25,6 +25,7 @@ src/
 │   │   ├── Piazzolla-Italic-Variable.ttf
 │   │   └── Piazzolla-Variable.ttf
 │   └── projects/                  # screenshots; Astro resizes them and serves WebP
+│       ├── date-picker.png
 │       ├── images-to-slideshow.png
 │       ├── shotlify.png
 │       ├── smackhem.png
@@ -35,6 +36,7 @@ src/
 │   └── Wireframe.astro            # the hero figure: canvas, caption, spin toggle
 ├── content/
 │   └── projects/                  # one Markdown file per project
+│       ├── date-picker.md
 │       ├── images-to-slideshow.md
 │       ├── shotlify.md
 │       ├── smackhem.md
