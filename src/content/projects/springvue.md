@@ -1,23 +1,23 @@
 ---
 title: springvue
-summary: A Vue 3 SPA served by a Spring monolith, with a Rust/Actix twin for benchmarking.
+summary: A Java CRUD app with a Vue front end, now getting a security review and a Rust twin to compare it against.
 repo: https://github.com/ClarkGH/springvue
-stack: [Vue 3, Pinia, Spring Boot, Rust, Actix, PostgreSQL]
-status: experiment
+stack: [Java, Spring Boot, Vue 3, Pinia, PostgreSQL, Rust, Actix]
+status: active
 image: ../../assets/projects/springvue.png
 imageAlt: "The Vue todo app: a box for adding todos, then four todos with Edit and Delete buttons, two of them checked off."
 order: 2
 ---
 
-A proof-of-concept "super monolith": a Vue 3 single-page app built and served straight out of a Spring Boot backend. A second Actix (Rust) server, still a work in progress, implements the same CRUD API so the two can be benchmarked against each other.
+A plain CRUD app: a todo list per user, with a Vue 3 single-page app built and served straight out of a Spring Boot backend. It started as a small Java app and is turning into a comparison project.
 
 ## Why
 
-To strengthen my web architecture skills. I'm comfortable with Spring controllers and solid in JavaScript, and Rust is new territory, so building the same thing twice was the most direct way to compare them.
+To strengthen my web architecture skills. I'm comfortable with Spring controllers and solid in JavaScript, so a Java CRUD app was familiar ground. Rust is new territory, so the next step is building the same API again in Actix and seeing how the two compare.
 
-## What's in it
+## Where it's at
 
-- **One API contract, two backends.** Spring (Maven, Java 17) and Actix serve the same endpoints.
-- **PostgreSQL with Flyway migrations**, plus JWT auth configured through environment variables.
-- **A single build.** One script builds the Vue app and drops it into Spring's static folder.
-- **Design-first docs.** The general design, each backend, and the benchmark rules for comparing Rust and Java are each documented separately.
+- **The Java app works.** Spring Boot with PostgreSQL and Flyway migrations, JWT login, and one build script that drops the Vue app into Spring's static folder.
+- **A security review came first.** Before benchmarking anything, I reviewed the Java side as if it were going to production. Turns out past me left a few gaps, like a login that takes longer for real usernames than for made-up ones. The fixes land before the benchmarks, so the numbers measure the fixed code.
+- **The Rust twin is barely started.** Actix answers a single hello-world route for now. It'll implement the same API contract, with the review's findings built in from the start.
+- **Benchmarks are planned, not run.** The rules for a fair comparison (same schema, same data, same work per request) are written down. The numbers come later.
