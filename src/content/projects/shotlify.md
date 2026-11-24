@@ -2,7 +2,7 @@
 title: Shotlify
 summary: Upload videos, capture still frames in the browser, and gather them for a slideshow.
 repo: https://github.com/ClarkGH/shotlify
-stack: [Next.js, React, TypeScript, tRPC, Tailwind CSS]
+stack: [Next.js, React, TypeScript, Tailwind CSS]
 status: paused
 image: ../../assets/projects/shotlify.png
 imageAlt: "The landing page: the Shotlify name in a red-to-blue gradient, links to Home, Videos and Images, and a welcome message."
