@@ -22,4 +22,6 @@ A game engine inspired by Drakkhen's exploration and CrossCode's use of web tech
 
 The design document drives the project: every system gets a written spec before it gets code, and the spec stays up to date as things change. Tasks are tracked as GitHub issues.
 
+I also benchmarked the whole commit history: how big each build is, and how long a cold load takes to make its first WebGL draw. Today that's about 120 ms, in software rendering and without the game's assets, so it's a number for comparing commits, not a promise. The [method, raw numbers and limits](https://github.com/ClarkGH/smackhem/blob/main/docs/performance.md) are in the repo, so you don't have to take my word for it.
+
 After more than five years of studying 3D, I can finally say I've put a pin in quaternions.
