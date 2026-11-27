@@ -57,7 +57,7 @@ const sections = [
     {
       sections.map(({ heading, items }) => (
         // Native <details>: keyboard, Enter/Space and the expanded state come for free, no script.
-        <details open>
+        <details class="disclosure" open>
           <summary>{heading}</summary>
           <ul>
             {items.map(([name, href, note]) => (
@@ -135,43 +135,6 @@ const sections = [
   }
   details {
     margin-top: 2.25rem;
-  }
-  summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    cursor: pointer;
-    list-style: none; /* hide the default triangle; ours is on the right */
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 500;
-    line-height: 1.1;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--rule);
-  }
-  summary::-webkit-details-marker {
-    display: none;
-  }
-  summary::after {
-    content: '';
-    width: 0.45em;
-    height: 0.45em;
-    margin-right: 0.2em;
-    border-right: 1.5px solid var(--muted);
-    border-bottom: 1.5px solid var(--muted);
-    transform: translateY(-0.15em) rotate(45deg); /* points down: open */
-    transition: transform 150ms ease;
-  }
-  details:not([open]) > summary::after {
-    transform: rotate(-45deg); /* points right: closed */
-  }
-  summary:hover::after {
-    border-color: var(--text);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    summary::after {
-      transition: none;
-    }
   }
   ul {
     list-style: none;

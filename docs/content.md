@@ -10,6 +10,7 @@ Projects are Markdown files with frontmatter. Astro validates them against a sch
 - [The schema](#the-schema)
 - [Screenshots](#screenshots)
     - [Writing alt text](#writing-alt-text)
+- [Technical details](#technical-details)
 - [Where a project shows up](#where-a-project-shows-up)
 - [Rules it follows](#rules-it-follows)
 - [Not built yet](#not-built-yet)
@@ -97,6 +98,28 @@ Alt text is for someone who can't see the image. Describe what's in the screensh
 - **Don't** put the meaning only in the image. If the screenshot shows something the write-up depends on, say it in the text too.
 
 The home page thumbnails use `alt=""` on purpose: they're hidden duplicates of the title link, so describing them would mean hearing everything twice.
+
+## Technical details
+
+A project page is written for two readers: someone who isn't an engineer, who needs the plain story, and an engineer, who wants the depth. So the page stays short, and the depth goes in an optional section that starts collapsed:
+
+```md
+## Status
+
+Done. …
+
+## Technical details
+
+- **Retrieval.** Each model is embedded with …
+```
+
+- **Write a normal `## Technical details` heading.** The page template turns it and everything after it into a `<details>` with "Technical details" as its button ([technicalDetails.ts](../src/lib/technicalDetails.ts), with a spec). You never write HTML.
+- **It has to be the last section.** Everything after the heading goes inside, including any later `##` sections.
+- **No Markdown images on a page that has it.** The split works on the rendered HTML, which skips Astro's image processing, so the build fails with a clear message instead.
+- **Plain readers shouldn't need it.** The page above it has to make sense on its own.
+- **It's still in the page's HTML,** so search engines and AI tools read it even while it's closed.
+
+It uses the same disclosure pattern as the learning menu, see [site-shell.md](site-shell.md#the-learning-menu). Why it doesn't affect layout shift: [performance-seo.md](performance-seo.md#collapsed-sections-and-cls).
 
 ## Where a project shows up
 

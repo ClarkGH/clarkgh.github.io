@@ -12,10 +12,12 @@ How the site keeps Lighthouse happy: fast first paint (LCP), nothing jumping aro
 - [Images](#images)
 - [JavaScript](#javascript)
 - [Layout shift](#layout-shift)
+    - [Collapsed sections and CLS](#collapsed-sections-and-cls)
 - [Metadata](#metadata)
     - [Social cards](#social-cards)
         - [How the default card is built](#how-the-default-card-is-built)
     - [Structured data](#structured-data)
+    - [llms.txt](#llmstxt)
     - [Sitemap and robots.txt](#sitemap-and-robotstxt)
 - [Deploy](#deploy)
 - [Measuring it](#measuring-it)
@@ -113,12 +115,22 @@ Things that would make content jump, and how each is held still:
 | The typewriter headline | Every letter is laid out from the start and only made visible, see [site-shell.md](site-shell.md#the-typewriter-headline) |
 | The spin button appearing | Its space is reserved with `visibility: hidden` until the script runs |
 | Theme applied late | The inline pre-paint theme script |
+| Opening a project's "Technical details" | Nothing needed: see below |
+
+### Collapsed sections and CLS
+
+A project's "Technical details" section ([content.md](content.md#technical-details)) is a `<details>` that pushes the page down when opened. That doesn't count as layout shift: CLS leaves out any shift within about 500 ms of a click, tap or keypress (the `hadRecentInput` flag on each layout-shift entry), because the person asked for it. Two rules keep it that way:
+
+- **It starts closed in the HTML, and no script opens it.** An open triggered by a script after load would count.
+- **It opens instantly.** Only the 150 ms chevron turn animates, never the height, so no shift lands after the 500 ms window.
+
+**Measured on 2026-11-27,** on VectorRAGNuxt from a production build: Lighthouse mobile gave Performance 100, Accessibility 100 and CLS 0. A Playwright check opened the section by click, then closed and reopened it by keyboard. It recorded 3 layout shifts, all flagged as user input, so none counted.
 
 ## Metadata
 
 Every page gets, from [Base.astro](../src/layouts/Base.astro):
 
-- **`<title>`:** "Clark Hinchcliff" on the home page, "Project – Clark Hinchcliff" elsewhere.
+- **`<title>`:** "Clark Hinchcliff – Frontend Engineer" on the home page, "Project – Clark Hinchcliff" elsewhere. The home title is the line most people see first in search results and link previews, so it says what the job is, not just the name.
 - **`<meta name="description">`:** the project's `summary`, or the home page's own description.
 - **`<link rel="canonical">`:** the page's absolute URL, so crawlers treat it as the one true address.
 - **`<html lang="en">`.**
@@ -156,7 +168,20 @@ The card is made on every build by [og.png.ts](../src/pages/og.png.ts), a static
 
 ### Structured data
 
-The home page carries JSON-LD (schema.org) describing a `Person` (name, job title, GitHub and LinkedIn as `sameAs`) and the `WebSite`, linked by `@id`. This is what lets a search engine connect the site with the profiles. It's escaped before it's written into the page, see [security.md](security.md#structured-data).
+JSON-LD (schema.org) is built by [structuredData.ts](../src/lib/structuredData.ts), and each page passes its own to `Base`:
+
+- **The home page** describes a `Person` (name, job title, GitHub and LinkedIn as `sameAs`, and skills as `knowsAbout`) and the `WebSite`, linked by `@id`. This is what lets search engines and AI assistants connect the site, the profiles and the skills.
+- **Each project page** describes a `SoftwareSourceCode`: name, summary, page URL, repo as `codeRepository`, the stack as `keywords`, and the same `Person` as `author`. It's built from the project's frontmatter, so it never needs writing by hand.
+
+**Structured data only repeats what the pages show.** Hidden claims meant for machines (keyword lists, skills no page backs up) are what search engines treat as spam. A spec enforces this: every `knowsAbout` entry in [site.ts](../src/lib/site.ts) has to appear in some project's visible text, so adding a skill means showing it first.
+
+It's escaped before it's written into the page, see [security.md](security.md#structured-data).
+
+### llms.txt
+
+`/llms.txt` is a Markdown summary of the site for AI assistants, following the [llmstxt.org](https://llmstxt.org/) proposal: an H1, a one-line summary, then each project with its summary, status, page and repo. [llms.txt.ts](../src/pages/llms.txt.ts) builds it from the project collection on every build (the text comes from [llmsTxt.ts](../src/lib/llmsTxt.ts)), so it can't fall behind the pages.
+
+It also makes Lighthouse's Agentic Browsing audit predictable. Without the file, the audit depended on how GitHub Pages answered a missing file: a 404 passed as "not applicable," but a one-off 503 failed it (2026-11-18).
 
 ### Sitemap and robots.txt
 
@@ -191,7 +216,7 @@ Lighthouse needs Chrome. Either:
 | `/` (2026-11-13) | 99 | 100 | 100 | 100 | 100 |
 | `/projects/smackhem/` (2026-11-12) | 100 | 100 | 100 | 92 | – |
 
-Agentic Browsing counts a missing `/llms.txt` or ARD manifest as "not applicable" once Lighthouse can fetch them, so neither file is needed for the score.
+Agentic Browsing counts a missing `/llms.txt` or ARD manifest as "not applicable" once Lighthouse can fetch them. The site now has an `/llms.txt` anyway ([why](#llmstxt)).
 
 CLS is 0 and LCP is 0.6–1.6 s on both. Two things to know when reading the numbers:
 

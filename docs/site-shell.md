@@ -75,9 +75,9 @@ That script lives in [themeInit.ts](../src/lib/themeInit.ts) rather than inline 
 
 ## Header and footer
 
-- **Header:** the name (home link), Projects, GitHub, LinkedIn, the theme button and the menu button (a three-line SVG drawn like the theme icon).
-- **Narrow screens:** below 40rem, GitHub and LinkedIn are hidden from the header. Below 30rem, so is Projects (the list is right under the hero). This keeps the header on one line down to 320px, which WCAG's reflow rule (1.4.10) needs.
-- **Footer:** the copyright line, plus "Find me on GitHub and LinkedIn" on every page, so the profiles are always reachable even when the header hides them.
+- **Header:** the name (home link), Projects, GitHub, LinkedIn, Email (a `mailto:` link), the theme button and the menu button (a three-line SVG drawn like the theme icon).
+- **Narrow screens:** below 40rem, GitHub, LinkedIn and Email are hidden from the header. Below 30rem, so is Projects (the list is right under the hero). This keeps the header on one line down to 320px, which WCAG's reflow rule (1.4.10) needs.
+- **Footer:** the copyright line, plus "Find me on GitHub and LinkedIn, or email …" with the address written out, on every page, so the profiles and email are always reachable even when the header hides them. The address lives in `OWNER` in [site.ts](../src/lib/site.ts). It's a plain `mailto:` link, not hidden behind JavaScript or CSS tricks, which break it for people without JavaScript and for some screen readers; spam filtering is left to the inbox.
 
 One gotcha: Astro's HTML compressor drops a line break between a word and a link that starts the next line, so `and\n<a>` renders as "and<a>" with no space. Keep a word and the link after it on the same line.
 
@@ -94,8 +94,11 @@ What's added on top:
 - **Clicking the backdrop closes it.** A click on the backdrop lands on the `<dialog>` element itself, so `event.target === menu` means "outside the sheet". The inner wrapper has `min-height: 100%`, so clicks on the sheet's empty lower part don't count as outside.
 - **Focus returns to the menu button** on close, and its `aria-expanded` is kept in sync.
 - **Width is `min(28rem, 100%)`**, not `100vw`, because `vw` includes the scrollbar and pushed the sheet partly off screen.
+- **It comes last in the page,** after the footer. When it's closed, browsers and screen readers skip it, but crawlers and AI tools read a page's text in source order. When it sat before `<main>`, 30 resource links came before anything about Clark. `showModal()` puts the open dialog on top of everything, so where it sits in the source doesn't change how it looks.
 
 Each section (Read, Listen, Watch) is a `<details>`/`<summary>`, so it collapses with no script, and screen readers announce whether it's expanded. They start open. The trade-off: the section titles aren't headings anymore, because some screen readers treat a heading inside `<summary>` as a button and drop the heading. With only three sections, Tab is enough to move between them.
+
+**One disclosure pattern for the whole site.** The summary row (the rule under it and the chevron on the right, turning in 150 ms, or not at all with reduced motion) is the `.disclosure` class in [global.css](../src/styles/global.css). The learning menu's sections and a project page's collapsed "Technical details" ([content.md](content.md#technical-details)) both use it, so anything that opens and closes looks and behaves the same. One difference, on purpose: on project pages the rule under the summary is dropped, so "Technical details" reads like the page's other section headings.
 
 ## The typewriter headline
 

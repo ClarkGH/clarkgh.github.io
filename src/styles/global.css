@@ -215,6 +215,54 @@ h3 {
   color: var(--text);
 }
 
+/*
+  A disclosure: a native <details> whose summary is a heading-like row with a chevron on the right.
+  One pattern for the learning menu's sections and the projects' technical details.
+  It opens instantly (only the chevron turns), so opening one never counts toward CLS.
+*/
+.disclosure > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  cursor: pointer;
+  list-style: none; /* hide the default triangle; ours is on the right */
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.1;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure > summary::after {
+  content: '';
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.2em;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  transform: translateY(-0.15em) rotate(45deg); /* points down: open */
+  transition: transform 150ms ease;
+}
+
+.disclosure:not([open]) > summary::after {
+  transform: rotate(-45deg); /* points right: closed */
+}
+
+.disclosure > summary:hover::after {
+  border-color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disclosure > summary::after {
+    transition: none;
+  }
+}
+
 /* A project's stack: a plain italic line. */
 .stack {
   font-style: italic;

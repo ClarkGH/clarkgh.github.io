@@ -3,11 +3,13 @@ import '../styles/global.css';
 import { Font } from 'astro:assets';
 import LearnMenu from '../components/LearnMenu.astro';
 import { PROFILE_REL } from '../lib/externalLinks';
+import { OWNER, SITE_DESCRIPTION } from '../lib/site';
 import { CARD_ALT } from '../lib/socialCard';
+import { serializeJsonLd } from '../lib/structuredData';
 import { THEME_INIT } from '../lib/themeInit';
 
-const GITHUB = 'https://github.com/ClarkGH';
-const LINKEDIN = 'https://www.linkedin.com/in/clarkgh/';
+const GITHUB = OWNER.github;
+const LINKEDIN = OWNER.linkedin;
 
 interface Props {
   title: string;
@@ -16,39 +18,21 @@ interface Props {
   type?: 'profile' | 'article';
   /** Social card image (a site-relative URL) and its alt text. Defaults to the site card. */
   image?: { src: string; alt: string };
+  /** schema.org structured data for this page, from src/lib/structuredData.ts. */
+  jsonLd?: unknown;
 }
 
 const {
   title,
-  description = 'Clark Hinchcliff, a frontend engineer, and the projects he’s been building and learning from.',
+  description = SITE_DESCRIPTION,
   type = 'profile',
   image = { src: '/og.png', alt: CARD_ALT },
+  jsonLd,
 } = Astro.props;
 const isHome = Astro.url.pathname === '/';
-const fullTitle = isHome ? 'Clark Hinchcliff' : `${title} – Clark Hinchcliff`;
+const fullTitle = isHome ? `${OWNER.name} – ${OWNER.jobTitle}` : `${title} – ${OWNER.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image.src, Astro.site);
-
-// Structured data for the home page: who the site is about, and the site itself.
-const jsonLd = isHome && {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Person',
-      '@id': `${Astro.site}#clark`,
-      name: 'Clark Hinchcliff',
-      jobTitle: 'Frontend engineer',
-      url: Astro.site?.href,
-      sameAs: [GITHUB, LINKEDIN],
-    },
-    {
-      '@type': 'WebSite',
-      name: 'Clark Hinchcliff',
-      url: Astro.site?.href,
-      author: { '@id': `${Astro.site}#clark` },
-    },
-  ],
-};
 ---
 
 <!doctype html>
@@ -72,10 +56,7 @@ const jsonLd = isHome && {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#1c1a33" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {
-      // Escape "<" so no string in the data can close the <script> element early.
-      jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
-    }
+    {jsonLd && <script type="application/ld+json" set:html={serializeJsonLd(jsonLd)} />}
     <!-- Dark by default; a saved choice wins. Inline and before paint, so there's no flash. -->
     <script is:inline set:html={THEME_INIT} />
     <!-- Self-hosted Piazzolla (astro.config.mjs). Preload only the upright face: it draws the h1 and body. -->
@@ -89,6 +70,7 @@ const jsonLd = isHome && {
         <a class="nav-projects" href="/#projects">Projects</a>
         <a class="nav-social" href={GITHUB} rel={PROFILE_REL}>GitHub</a>
         <a class="nav-social" href={LINKEDIN} rel={PROFILE_REL}>LinkedIn</a>
+        <a class="nav-social" href={`mailto:${OWNER.email}`}>Email</a>
         <button class="icon-btn theme-btn" type="button" aria-label="Switch to light mode">
           <!-- A half-lit disc: the same idea as the wireframe's depth shading. -->
           <svg viewBox="0 0 20 20" aria-hidden="true">
@@ -111,7 +93,6 @@ const jsonLd = isHome && {
         </button>
       </nav>
     </header>
-    <LearnMenu />
     <main class="wrap" id="main">
       <slot />
     </main>
@@ -120,10 +101,12 @@ const jsonLd = isHome && {
         Clark Hinchcliff, {new Date().getFullYear()}. Built with Astro and hosted on GitHub Pages.
         <!-- Always here, so the profiles are reachable on phones, where the header drops them. -->
         <span class="elsewhere">
-          Find me on <a href={GITHUB} rel={PROFILE_REL}>GitHub</a> and <a href={LINKEDIN} rel={PROFILE_REL}>LinkedIn</a>.
+          Find me on <a href={GITHUB} rel={PROFILE_REL}>GitHub</a> and <a href={LINKEDIN} rel={PROFILE_REL}>LinkedIn</a>, or email <a href={`mailto:${OWNER.email}`}>{OWNER.email}</a>.
         </span>
       </p>
     </footer>
+    <!-- Last in the page: closed, it isn't shown, but crawlers and AI tools read text in this order, so the page comes first. -->
+    <LearnMenu />
   </body>
 </html>
 

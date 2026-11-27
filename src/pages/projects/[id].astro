@@ -3,6 +3,8 @@ import { getCollection, render } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import { EXTERNAL_REL } from '../../lib/externalLinks';
+import { projectJsonLd } from '../../lib/structuredData';
+import { splitTechnical } from '../../lib/technicalDetails';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -11,6 +13,12 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
+// A "## Technical details" section, if the page has one, goes into a collapsed <details> (src/lib/technicalDetails.ts).
+const { main, technical } = splitTechnical(project.rendered?.html ?? '');
+if (technical !== null && project.rendered?.metadata?.imagePaths?.length) {
+  // The split uses the rendered HTML directly, which skips Astro's processing of Markdown images.
+  throw new Error(`${project.id}: Markdown images aren't supported on a page with a Technical details section.`);
+}
 // Social cards: a JPEG copy of the screenshot (WebP isn't read everywhere that unfurls links).
 const og = project.data.image
   ? await getImage({ src: project.data.image, format: 'jpeg', width: Math.min(1200, project.data.image.width) })
@@ -22,6 +30,7 @@ const og = project.data.image
   description={project.data.summary}
   type="article"
   image={og && { src: og.src, alt: project.data.imageAlt ?? '' }}
+  jsonLd={projectJsonLd(project.data, new URL(Astro.url.pathname, Astro.site), Astro.site!)}
 >
   <article>
     <a href="/#projects" class="back">All projects</a>
@@ -44,9 +53,16 @@ const og = project.data.image
         />
       )
     }
-    <div class="prose">
-      <Content />
-    </div>
+    {technical === null && <div class="prose"><Content /></div>}
+    {technical !== null && <div class="prose" set:html={main} />}
+    {
+      technical !== null && (
+        <details class="disclosure deep">
+          <summary>Technical details</summary>
+          <div class="prose" set:html={technical} />
+        </details>
+      )
+    }
   </article>
 </Base>
 
@@ -97,5 +113,19 @@ const og = project.data.image
   }
   .prose :global(li::marker) {
     color: var(--muted);
+  }
+  /* The collapsed technical section: spaced like an h2, with its summary at h2 size. */
+  .deep {
+    margin-top: 2.5rem;
+  }
+  .deep > summary {
+    font-size: 1.6rem;
+    font-weight: 400;
+    /* No rule under it here (Clark's call): it reads as a heading, like the page's other sections. */
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .deep > .prose > :global(:first-child) {
+    margin-top: 1rem;
   }
 </style>

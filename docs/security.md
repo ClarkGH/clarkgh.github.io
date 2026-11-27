@@ -28,7 +28,7 @@ A static site with no forms, no accounts, no cookies and no third-party scripts 
 | [astro.config.mjs](../astro.config.mjs) | `security.csp`: the directives, plus the theme script's hash |
 | [themeInit.ts](../src/lib/themeInit.ts) | The one inline script Astro doesn't hash, shared by the page and the config |
 | [checkCsp.mjs](../scripts/checkCsp.mjs) | Post-build gate: fails if any inline script or style isn't allowed by the CSP |
-| [Base.astro](../src/layouts/Base.astro) | The referrer policy, profile link `rel`s, the escaped JSON-LD |
+| [Base.astro](../src/layouts/Base.astro), [structuredData.ts](../src/lib/structuredData.ts) | The referrer policy, profile link `rel`s, the escaped JSON-LD |
 | [externalLinks.ts](../src/lib/externalLinks.ts) | `EXTERNAL_REL` and `PROFILE_REL` |
 
 ## The big picture
@@ -128,7 +128,7 @@ Markdown links don't get `rel`. Astro 7's Markdown processor (Sätteri) would ne
 
 ## Structured data
 
-The JSON-LD in the home page `<head>` is written with `set:html`, which doesn't escape anything. `JSON.stringify` doesn't escape `<` either, so a string containing `</script>` could close the element early and inject markup. The data is our own constants today, but it's escaped anyway (`<` becomes `<`), so it stays safe if it's ever generated from content.
+The JSON-LD in each page's `<head>` is written with `set:html`, which doesn't escape anything. `JSON.stringify` doesn't escape `<` either, so a string containing `</script>` could close the element early and inject markup. Project pages build theirs from the Markdown frontmatter, so `serializeJsonLd` in [structuredData.ts](../src/lib/structuredData.ts) turns every `<` into `\u003c`, and a spec checks that a `</script>` string can't get out.
 
 ## Everything else we checked
 

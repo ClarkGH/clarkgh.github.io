@@ -48,11 +48,19 @@ src/
 │   ├── cspAudit.spec.ts
 │   ├── cspAudit.ts                # the CSP check's rules, run by scripts/checkCsp.mjs
 │   ├── externalLinks.ts           # rel values for links that leave the site
+│   ├── llmsTxt.spec.ts
+│   ├── llmsTxt.ts                 # /llms.txt as Markdown, built from the project collection
+│   ├── site.ts                    # owner, profiles, skills, status labels: shared by the <head>, JSON-LD and llms.txt
 │   ├── socialCard.spec.ts
 │   ├── socialCard.ts              # the social card as data: tagline, alt text, colors, the solid as SVG
+│   ├── structuredData.spec.ts
+│   ├── structuredData.ts          # schema.org JSON-LD for the home page (Person) and project pages (SoftwareSourceCode)
+│   ├── technicalDetails.spec.ts
+│   ├── technicalDetails.ts        # splits a project's "Technical details" section off into a collapsed <details>
 │   └── themeInit.ts               # the pre-paint theme script, shared with the CSP config
 ├── pages/
 │   ├── index.astro                # home: hero + project index
+│   ├── llms.txt.ts                # /llms.txt for AI assistants
 │   ├── og.png.ts                  # the social card, rendered with sharp at build time
 │   ├── projects/
 │   │   └── [id].astro             # one page per project
