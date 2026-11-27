@@ -3,7 +3,7 @@ title: Images to Slideshow
 summary: The service that turns still images into a video slideshow with music and crossfades, for Shotlify. A Node.js API built on FFmpeg.
 repo: https://github.com/ClarkGH/node_images_to_slideshow
 stack: [Node.js, Express, FFmpeg, videoshow]
-status: paused
+status: active
 image: ../../assets/projects/images-to-slideshow.png
 imageAlt: "Terminal output from one run: the server starts, FFmpeg builds slideshow.mp4, and the temporary files are deleted after the response is sent."
 order: 6
@@ -15,7 +15,7 @@ The screenshot is a real run: two frames in, one slideshow out, and the cleanup 
 
 ## Status
 
-Paused, with a plan. It works on its own today. As part of the Shotlify rebuild, it's next in line to become a TypeScript job API: send the frames, get a job back, and fetch the video when it's ready. After that, it gets its own FFmpeg pipeline in place of videoshow.
+It works on its own today, and it's back in active work now that Shotlify's redesign is live. Next, it becomes a TypeScript job API: send the frames, get a job back, and fetch the video when it's ready. That's what connects Shotlify's Create slideshow button. After that, it gets its own FFmpeg pipeline in place of videoshow.
 
 ## Technical details
 

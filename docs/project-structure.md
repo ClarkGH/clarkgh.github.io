@@ -27,6 +27,7 @@ src/
 │   └── projects/                  # screenshots; Astro resizes them and serves WebP
 │       ├── date-picker.png
 │       ├── images-to-slideshow.png
+│       ├── shotlify-2023.png      # the 2023 version, shown as "Before" for comparison
 │       ├── shotlify.png
 │       ├── smackhem.png
 │       ├── springvue.png

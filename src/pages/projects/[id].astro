@@ -56,6 +56,21 @@ const og = project.data.image
     {technical === null && <div class="prose"><Content /></div>}
     {technical !== null && <div class="prose" set:html={main} />}
     {
+      project.data.beforeImage && (
+        <figure class="before">
+          <Image
+            class="shot"
+            src={project.data.beforeImage}
+            alt={project.data.beforeImageAlt ?? ''}
+            widths={[480, 840, 1280]}
+            sizes="(min-width: 46rem) 42rem, calc(100vw - 2rem)"
+            loading="lazy"
+          />
+          <figcaption>{project.data.beforeCaption}</figcaption>
+        </figure>
+      )
+    }
+    {
       technical !== null && (
         <details class="disclosure deep">
           <summary>Technical details</summary>
@@ -113,6 +128,15 @@ const og = project.data.image
   }
   .prose :global(li::marker) {
     color: var(--muted);
+  }
+  /* An older version's screenshot, for comparison. */
+  .before {
+    margin: 1.5rem 0 0;
+  }
+  .before figcaption {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.95rem;
   }
   /* The collapsed technical section: spaced like an h2, with its summary at h2 size. */
   .deep {

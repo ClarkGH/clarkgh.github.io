@@ -13,7 +13,7 @@ I built this in 2023 as a proof of concept: a date picker that looks the same ev
 
 ## Status
 
-Done for now. It still needs testing with real screen readers, and the typed format is US-only (MM/DD/YYYY), whatever the locale.
+Done for now. It works well with the Orca screen reader, though NVDA and VoiceOver are still untested, and the typed format is US-only (MM/DD/YYYY), whatever the locale.
 
 ## Technical details
 

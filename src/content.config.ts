@@ -20,10 +20,20 @@ const projects = defineCollection({
         imageAlt: z.string().min(1).optional(),
         // Lower numbers show first on the home page.
         order: z.number().default(100),
+        // An older version's screenshot, shown at the end of the visible page as "Before: …" for comparison.
+        beforeImage: image().optional(),
+        // What the older screenshot shows. Required with `beforeImage`, like imageAlt.
+        beforeImageAlt: z.string().min(1).optional(),
+        // The caption under it, e.g. "The 2023 version."
+        beforeCaption: z.string().min(1).optional(),
       })
       .refine((d) => !d.image || d.imageAlt, {
         message: 'imageAlt is required when image is set',
         path: ['imageAlt'],
+      })
+      .refine((d) => !d.beforeImage || (d.beforeImageAlt && d.beforeCaption), {
+        message: 'beforeImageAlt and beforeCaption are required when beforeImage is set',
+        path: ['beforeImageAlt'],
       }),
 });
 

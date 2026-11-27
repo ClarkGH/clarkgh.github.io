@@ -76,6 +76,9 @@ The write-up, in Markdown. Use ## for sections: the page title is the only h1.
 | `image` | image, optional | A path relative to the `.md` file. `image()` makes Astro import and process it |
 | `imageAlt` | string, optional | **Required whenever `image` is set**, enforced by a `.refine()` on the schema |
 | `order` | number | Sort order on the home page, default 100 |
+| `beforeImage` | image, optional | An older version's screenshot. It's shown at the end of the visible page, above Technical details, as a captioned figure, so readers can compare. Markdown images aren't allowed on pages with Technical details, so it lives in frontmatter |
+| `beforeImageAlt` | string, optional | **Required with `beforeImage`** |
+| `beforeCaption` | string, optional | **Required with `beforeImage`**, e.g. "Before: the 2023 version." |
 
 The first project by `order` is the lead, with a bigger title and summary.
 
